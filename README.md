@@ -1,9 +1,7 @@
-# 2022 Purdue
-
 # 2022 Purdue UAV Payload Detection by SWATTER?
 
 📋 Project title
-
+>.asdf
 📆 Project Period
 
 📌 Problem Statement
