@@ -28,8 +28,8 @@
 >.
 
 👨‍👩‍👧‍👦 Collaborator
->💂‍♂️ Joonki Rhee
+💂‍♂️ Joonki Rhee
 - Kyonggi University, Suwon, South Korea
 - Major in Computer Science
 - rhe9788@gmail.com
-- 👾 github.com/JK831.
+- 👾 github.com/JK831>
