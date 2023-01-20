@@ -30,10 +30,16 @@ Hello, world!
 >.
 
 👨‍👩‍👧‍👦 Collaborator
->
+```
 💂‍♂️ Joonki Rhee
 - Kyonggi University, Suwon, South Korea
 - Major in Computer Science
 - rhe9788@gmail.com
 - 👾 github.com/JK831
-- .
+
+💂‍ Gwangwon Kim
+- Kyonggi University, Suwon, South Korea
+- Major in Industrial Engineering, Data Engineering
+- tiger6777@kyonggi.ac.kr
+- 👾 github.com/dev-gw
+```
