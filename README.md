@@ -1,4 +1,4 @@
-# 2022 Purdue Postition Estimation of Drone Project by TEAM_SWATTER
+# 2022 Purdue UAV Payload Detection by SWATTER?
 
 📋 Project title
 ```markdown
@@ -6,39 +6,31 @@ Hello, world!
 ```
 
 📆 Project Period
-```markdown
-```
+>.
 
 📌 Problem Statement
-```markdown
-```
+>.
 
 🏝️ Novelty
-```markdown
-```
+>.
 
 🏛️ Sytem Overview
-```markdown
-```
+>.
 
 🏄 Hardware
-```markdown
-```
+>.
 
 🏂 Software
-```markdown
-```
+>.
 
 🖥️ Environment Setting
-```markdown
-```
+>.
 
 💫 Installation
-```markdown
-```
+>.
 
 👨‍👩‍👧‍👦 Collaborator
-```markdown
+```
 💂‍♂️ Joonki Rhee
 - Kyonggi University, Suwon, South Korea
 - Major in Computer Science
@@ -50,4 +42,10 @@ Hello, world!
 - Major in Industrial Engineering, Data Engineering
 - tiger6777@kyonggi.ac.kr
 - 👾 github.com/dev-gw
+
+💂‍ Minseop Shin
+- Dongseo University, Busan, South Korea
+- Major in Software Engineering
+- 20191520@office.dongseo.ac.kr
+- 👾 github.com/dev-sms
 ```
