@@ -14,7 +14,7 @@ Hello, world!
 💡 Novelty
 >.
 
-🏛️ Sytem Overview
+🏛️ System Overview
 >.
 
 🏄 Hardware
