@@ -34,7 +34,7 @@ Hello, world!
 💂‍♂️ Joonki Rhee
 - Kyonggi University, Suwon, South Korea
 - Major in Computer Science
-- rhe9788@gmail.com
+- rhe9788@kyonggi.ac.kr
 - 👾 github.com/JK831
 
 💂‍ Gwangwon Kim
