@@ -11,7 +11,7 @@ Hello, world!
 📌 Problem Statement
 >.
 
-🏝️ Novelty
+💡 Novelty
 >.
 
 🏛️ Sytem Overview
@@ -48,4 +48,10 @@ Hello, world!
 - Major in Software Engineering
 - 20191520@office.dongseo.ac.kr
 - 👾 github.com/dev-sms
+
+💂‍ Hyunjong Jang
+- Dongseo University, Busan, South Korea
+- Major in Software Engineering
+- 20191580@office.dongseo.ac.kr
+- 👾 github.com/HyeonjongJang
 ```
