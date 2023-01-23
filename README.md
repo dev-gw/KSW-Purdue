@@ -6,7 +6,9 @@ Hello, world!
 ```
 
 📆 Project Period
->.
+```
+2023.01 ~ 2023.03 (in Purdue University)
+```
 
 📌 Problem Statement
 >.
