@@ -2,7 +2,7 @@
 
 📋 Project title
 ```markdown
-Hello, world!
+Deep Learning based Real Time Acoustic UAV Detection using Smartphone as Edge Computing Device
 ```
 
 📆 Project Period
@@ -11,25 +11,38 @@ Hello, world!
 ```
 
 📌 Problem Statement
->.
+```markdown
+
+```
 
 💡 Novelty
->.
+```markdown
+
+```
 
 🏛️ System Overview
->.
+```markdown
+
+```
 
 🏄 Hardware
->.
+```markdown
+
+```
 
 🏂 Software
->.
+```markdown
 
+```
 🖥️ Environment Setting
->.
+```markdown
+
+```
 
 💫 Installation
->.
+```markdown
+
+```
 
 👨‍👩‍👧‍👦 Collaborator
 ```
