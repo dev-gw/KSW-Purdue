@@ -8,13 +8,18 @@ from sklearn import svm, naive_bayes, neighbors
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
 import joblib
+import librosa
+
 
 # Data input
-
-# Data preprocessing
+audio_path = ''
+y, sr = librosa.load(audio_path) # sr = sampling rate
 
 # Feature Extraction
 ## MFCC
+
+
+
 
 ## mel
 
@@ -65,6 +70,8 @@ def trainning(X,y, model_name):
         model = model_name(X,y)
         model.fit(X,y)
         joblib.dump(model, './' + model_name + '.pkl') # save model
+        
+trainning(X,y)
 
-
+# 
 
