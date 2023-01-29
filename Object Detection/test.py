@@ -32,11 +32,13 @@ mel = librosa.feature.melspectrogram(y,sr=sr)
 mel = np.mean(mel.T, axis=0)
 print(mel.shape)
 
-## stft
-stft = np.abs(librosa.stft(y))
-print(stft.shape)
+## chroma_stft
+chroma_stft = librosa.feature.chroma_stft(y,sr)
+chroma_stft = np.mean(chroma_stft.T, axis=0)
+print(chroma_stft.shape)
 
 ## contrast
+stft = np.abs(librosa.stft(y))
 contrast = librosa.feature.spectral_contrast(S=stft,sr=sr)
 contrast = np.mean(contrast.T, axis=0)
 print(contrast.shape)
