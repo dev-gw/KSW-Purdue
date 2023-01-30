@@ -8,10 +8,12 @@ from sklearn import svm, naive_bayes, neighbors
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
 import joblib
+import librosa
+
 
 # Data input
-
-# Data preprocessing
+audio_path = ''
+y, sr = librosa.load(audio_path) # sr = sampling rate
 
 # Feature Extraction
 ## MFCC
@@ -41,14 +43,16 @@ def knn_base(X,y, n_neighbors=6):
     return knn_model
 
 ## NN(Nueral Network)
-def neural_base(INPUT_SIZE):
-    input_tensor = Input(shape=(INPUT_SIZE))
-    x = Dense(128, activation = 'relu')(input_tensor)
+def neural_base(shape):
+    input_tensor = Input(shape=(shape))
+    x = Dense(128)(input_tensor)
+    x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
-    x = Dense(128, activation='relu')(x)
+    x = Dense(128)(x)
+    x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
 
-    output = Dense(2, activation='sigmoid')(x)
+    output = Dense(1, activation='sigmoid')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
     model.summary()
@@ -57,7 +61,7 @@ def neural_base(INPUT_SIZE):
 # Model Trainning (Can edit for test)
 def trainning(X,y, model_name):
     if model_name == 'neural_base':
-        model = model_name(7)
+        model = model_name(5)
         model.compile(optimizer=Adam(lr=0.001), loss='binary_crossentropy', metrics=['accuracy'])
         model.fit(X,y, epochs=30)
         model.save(model_name + '.h5')
@@ -65,6 +69,7 @@ def trainning(X,y, model_name):
         model = model_name(X,y)
         model.fit(X,y)
         joblib.dump(model, './' + model_name + '.pkl') # save model
-
+        
+trainning(X,y)
 
 
