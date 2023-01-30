@@ -21,7 +21,8 @@ test2(test)
 
 # feature extraction test
 ## Verify shape of features
-df = pd.DataFrame(index = ['MFCC','mel','chroma_stft','contrast','tonnetz'],columns = ['Shape'])
+df = pd.DataFrame(index = ['MFCC','mel','chroma_stft','contrast','tonnetz']
+                  ,columns = ['Shape'])
 #df.index.name = 'Features'
 
 ## sample data
@@ -29,7 +30,7 @@ y, sr = librosa.load(librosa.ex('trumpet'))
 print(y)
 
 ## MFCC
-mfcc = librosa.feature.mfcc(y, sr=sr)
+mfcc = librosa.feature.mfcc(y, sr=sr, n_mfcc=40)
 mfcc = np.mean(mfcc.T,axis=0)
 # print(mfcc)
 df.iloc[0] = mfcc.shape[0]

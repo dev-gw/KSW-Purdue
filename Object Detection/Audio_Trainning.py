@@ -18,9 +18,6 @@ y, sr = librosa.load(audio_path) # sr = sampling rate
 # Feature Extraction
 ## MFCC
 
-
-
-
 ## mel
 
 ## contrast
@@ -46,14 +43,16 @@ def knn_base(X,y, n_neighbors=6):
     return knn_model
 
 ## NN(Nueral Network)
-def neural_base(INPUT_SIZE):
-    input_tensor = Input(shape=(INPUT_SIZE))
-    x = Dense(128, activation = 'relu')(input_tensor)
+def neural_base(shape):
+    input_tensor = Input(shape=(shape))
+    x = Dense(128)(input_tensor)
+    x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
-    x = Dense(128, activation='relu')(x)
+    x = Dense(128)(x)
+    x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
 
-    output = Dense(2, activation='sigmoid')(x)
+    output = Dense(1, activation='sigmoid')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
     model.summary()
@@ -62,7 +61,7 @@ def neural_base(INPUT_SIZE):
 # Model Trainning (Can edit for test)
 def trainning(X,y, model_name):
     if model_name == 'neural_base':
-        model = model_name(7)
+        model = model_name(5)
         model.compile(optimizer=Adam(lr=0.001), loss='binary_crossentropy', metrics=['accuracy'])
         model.fit(X,y, epochs=30)
         model.save(model_name + '.h5')
@@ -73,5 +72,4 @@ def trainning(X,y, model_name):
         
 trainning(X,y)
 
-# 
 
