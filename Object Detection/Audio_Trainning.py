@@ -16,15 +16,13 @@ audio_path = ''
 y, sr = librosa.load(audio_path) # sr = sampling rate
 
 # Feature Extraction
-## MFCC
-
-## mel
-
-## contrast
-
-## chroma
-
-## tonnetz
+def extract(y, sr):
+    mfcc = np.mean(librosa.feature.mfcc(y,sr=sr,n_mfcc=40).T,axis=0)
+    mel = np.mean(librosa.feature.melspectrogram(y,sr=sr).T, axis=0)
+    chroma_stft = np.mean(librosa.feature.chroma_stft(y, sr).T,axis=0)
+    contrast = np.mean(librosa.feature.stft(S=np.abs(librosa.stft(y)),sr=sr).T,axis=0)
+    tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(y),sr=sr).T,axis=0)
+    return mfcc, mel, chroma_stft, contrast, tonnetz
 
 # Modeling
 ## SVM(Support Vector Machine)
