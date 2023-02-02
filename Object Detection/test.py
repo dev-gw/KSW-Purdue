@@ -27,6 +27,7 @@ df = pd.DataFrame(index = ['MFCC','mel','chroma_stft','contrast','tonnetz']
 
 ## sample data
 y, sr = librosa.load(librosa.ex('trumpet'))
+print(y.shape)
 print(y)
 
 ## MFCC
