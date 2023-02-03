@@ -2,8 +2,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos
 
 ##ignore file
-Dataset
-
+Object Detection/Dataset
+Object Detection/*.pkl
+Object Detection/*.pyc
 
 ### macOS ###
 # General
