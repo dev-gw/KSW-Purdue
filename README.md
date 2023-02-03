@@ -1,5 +1,19 @@
 # 2022 Purdue UAV Payload Detection by SWATTER?
 
+#Environment Setting
+
+# Android Application
+
+Android Studio Electirc Eel (2022.1.1)
+
+Build #AI-221.6008.13.2211.9477386, built on January 11, 2023
+
+Runtime version: 11.0.15+0-b2043.56-887301 amd64
+
+VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
+
+Kotlin - 221-1.7.21-release-for-android-studio-AS5591.52
+
 📋 Project title
 ```markdown
 Deep Learning based Real Time Acoustic UAV Detection using Smartphone as Edge Computing Device
