@@ -3,26 +3,54 @@
 Version 1.2
 @author: Gwangwon Kim
 """
+import os
 import numpy as np
+import pandas as pd
 from sklearn import svm, naive_bayes, neighbors
 from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
 import joblib
 import librosa
 
-
-# Data input
-audio_path = ''
-y, sr = librosa.load(audio_path) # sr = sampling rate
+def name_change():
+    file_path = 'Dataset/DJI_Phantom4'
+    file_names = os.listdir(file_path)
+    i = 1
+    for name in file_names:
+        src = os.path.join(file_path, name)
+        dst = str(i)+'.wav'
+        dst = os.path.join(file_path, dst)
+        os.rename(src,dst)
+        i+=1
 
 # Feature Extraction
-def extract(y, sr):
-    mfcc = np.mean(librosa.feature.mfcc(y,sr=sr,n_mfcc=40).T,axis=0)
-    mel = np.mean(librosa.feature.melspectrogram(y,sr=sr).T, axis=0)
-    chroma_stft = np.mean(librosa.feature.chroma_stft(y, sr).T,axis=0)
-    contrast = np.mean(librosa.feature.stft(S=np.abs(librosa.stft(y)),sr=sr).T,axis=0)
-    tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(y),sr=sr).T,axis=0)
-    return mfcc, mel, chroma_stft, contrast, tonnetz
+def extract_feature(signal, sr):
+    try:
+        # select feature
+        mfcc = librosa.feature.mfcc(signal,sr=sr,n_mfcc=40)
+        #mel = librosa.feature.melspectrogram(signal,sr=sr).T
+        #chroma_stft = librosa.feature.chroma_stft(signal, sr).T
+        #contrast = librosa.feature.stft(S=np.abs(librosa.stft(signal)),sr=sr).T
+        #tonnetz = librosa.feature.tonnetz(y=librosa.effects.harmonic(signal),sr=sr).T
+        
+    except Exception as e:
+        print("Error when extract feature")
+        print(e)
+        return None
+
+    return mfcc
+
+def convert_data(length,company,label):
+    features = []     
+    for index in range(1,length+1):
+        file_name = 'Dataset/'+ company + '/' + str(index) + '.wav'
+        # mfcc extract
+        signal, sr = librosa.load(file_name, sr=22050)
+        data = extract_feature(signal, sr)
+        features.append([data,label]) # drone class
+        featuredf = pd.DataFrame(features, columns=['feature', 'class_label'])
+    return featuredf
 
 # Modeling
 ## SVM(Support Vector Machine)
@@ -68,6 +96,4 @@ def trainning(X,y, model_name):
         model.fit(X,y)
         joblib.dump(model, './' + model_name + '.pkl') # save model
         
-trainning(X,y)
-
 
