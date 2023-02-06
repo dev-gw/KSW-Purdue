@@ -7,11 +7,15 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn import svm, naive_bayes, neighbors
+import matplotlib.pyplot as plt
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
+from tensorflow.keras.layers import Input, Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
 import joblib
 import librosa
+from tensorflow.keras.optimizers import Adam , RMSprop 
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.callbacks import ReduceLROnPlateau , EarlyStopping , ModelCheckpoint , LearningRateScheduler
 
 def name_change():
     file_path = 'Dataset/DJI_Phantom4'
@@ -54,23 +58,23 @@ def convert_data(length,company,label):
 
 # Modeling
 ## SVM(Support Vector Machine)
-def svm_base(X,y,C,kernel='linear'):
-    svm_model = svm.SVC(C, kernel=kernel)
+def svm_base():
+    svm_model = svm.SVC(C=10, kernel='linear')
     return svm_model
 
 ## GNB (Gaussian Naive Bayes)
-def gnb_base(X,y):
+def gnb_base():
     gnb_model = naive_bayes.GaussianNB()
     return gnb_model
 
 ## KNN (K-Nearest-Neighbor)
-def knn_base(X,y, n_neighbors=6):
+def knn_base(n_neighbors=6):
     knn_model = neighbors.KNeighborsClassifier(n_neighbors=n_neighbors)
     return knn_model
 
 ## NN(Nueral Network)
-def neural_base(shape):
-    input_tensor = Input(shape=(shape))
+def neural_base(row,column):
+    input_tensor = Input(shape=(row,column))
     x = Dense(128)(input_tensor)
     x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
@@ -84,16 +88,37 @@ def neural_base(shape):
     model.summary()
     return model
 
-# Model Trainning (Can edit for test)
-def trainning(X,y, model_name):
-    if model_name == 'neural_base':
-        model = model_name(5)
-        model.compile(optimizer=Adam(lr=0.001), loss='binary_crossentropy', metrics=['accuracy'])
-        model.fit(X,y, epochs=30)
-        model.save(model_name + '.h5')
-    else:
-        model = model_name(X,y)
-        model.fit(X,y)
-        joblib.dump(model, './' + model_name + '.pkl') # save model
-        
+## CNN(Convolutional Nueral Network)
+def cnn_base(row, column, channel):
+    input_tensor = Input(shape=(row, column, channel)) # 배치제외 3차원
+    
+    x = Conv2D(filters=32, kernel_size=(2,2), padding='same')(input_tensor)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = Dropout(rate=0.2)(x)
+    
+    x = Conv2D(filters=64, kernel_size=(2,2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling2D(pool_size=(2,2))(x)
+    x = Dropout(rate=0.2)(x)
+    
+    x = Conv2D(filters=128, kernel_size=(2,2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling2D(pool_size=(2,2))(x)
+    x = Dropout(rate=0.2)(x)
+    
+    # GlobalAveragePooling
+    x = GlobalAveragePooling2D()(x)
+    output = Dense(2, activation='softmax', name='output')(x)
+    
+    model = Model(inputs=input_tensor, outputs=output)
+    return model
 
+def show_history(history):
+    plt.figure(figsize=(6,6))
+    plt.yticks(np.arange(0,1,0.05))
+    plt.plot(history.history['accuracy'], label='train')
+    plt.plot(history.history['val_accuracy'], label='valid')
+    plt.legend()

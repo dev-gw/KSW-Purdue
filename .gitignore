@@ -4,7 +4,8 @@
 ##ignore file
 Object Detection/Dataset
 Object Detection/*.pkl
-Object Detection/*.pyc
+Object Detection/__pycache__
+
 
 ### macOS ###
 # General
