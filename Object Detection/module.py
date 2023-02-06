@@ -32,7 +32,8 @@ def name_change():
 def extract_feature(signal, sr):
     try:
         # select feature
-        mfcc = librosa.feature.mfcc(signal,sr=sr,n_mfcc=40)
+        ## Except CNN, np.mean method is needed.
+        mfcc = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T,axis=0)
         #mel = librosa.feature.melspectrogram(signal,sr=sr).T
         #chroma_stft = librosa.feature.chroma_stft(signal, sr).T
         #contrast = librosa.feature.stft(S=np.abs(librosa.stft(signal)),sr=sr).T
@@ -58,8 +59,8 @@ def convert_data(length,company,label):
 
 # Modeling
 ## SVM(Support Vector Machine)
-def svm_base():
-    svm_model = svm.SVC(C=10, kernel='linear')
+def svm_base(C, kernel):
+    svm_model = svm.SVC(C=C, kernel=kernel)
     return svm_model
 
 ## GNB (Gaussian Naive Bayes)
@@ -73,8 +74,8 @@ def knn_base(n_neighbors=6):
     return knn_model
 
 ## NN(Nueral Network)
-def neural_base(row,column):
-    input_tensor = Input(shape=(row,column))
+def neural_base(column):
+    input_tensor = Input(shape=(column))
     x = Dense(128)(input_tensor)
     x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
@@ -82,7 +83,7 @@ def neural_base(row,column):
     x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
 
-    output = Dense(1, activation='sigmoid')(x)
+    output = Dense(2, activation='sigmoid')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
     model.summary()
@@ -114,6 +115,7 @@ def cnn_base(row, column, channel):
     output = Dense(2, activation='softmax', name='output')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
+    model.summary()
     return model
 
 def show_history(history):
