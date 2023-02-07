@@ -57,7 +57,6 @@ tonnetz = librosa.feature.tonnetz(y=librosa.effects.harmonic(y),sr=sr)
 tonnetz = np.mean(tonnetz.T, axis=0)
 df.iloc[4] = tonnetz.shape[0]
 
-print(df)
 
 # CNN
 ## preprocessing
@@ -69,3 +68,13 @@ cnn_model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['a
 cnn_history = cnn_model.fit(x_train_cnn, y_train_oh, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
 # Model evaluate
 cnn_accuracy = cnn_model.evaluate(x_test_cnn, y_test)[1]
+
+# Audio trim test
+from pydub import AudioSegment
+import math
+audio = AudioSegment.from_wav("") # file path
+seconds = 5 * 1000
+
+for i in range(int(math.floor(len(audio)/seconds))):
+    slice = audio[i*seconds:seconds*(i+1)]
+    slice.export('Dataset/trim_test/{}'.format(i), format='wav')
