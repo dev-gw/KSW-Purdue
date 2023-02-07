@@ -33,7 +33,7 @@ def extract_feature(signal, sr):
     try:
         # select feature
         ## Except CNN, np.mean method is needed.
-        mfcc = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T,axis=0)
+        mfcc = librosa.feature.mfcc(signal,sr=sr,n_mfcc=40)
         #mel = librosa.feature.melspectrogram(signal,sr=sr).T
         #chroma_stft = librosa.feature.chroma_stft(signal, sr).T
         #contrast = librosa.feature.stft(S=np.abs(librosa.stft(signal)),sr=sr).T
@@ -89,7 +89,7 @@ def neural_base(column):
     model.summary()
     return model
 
-## CNN(Convolutional Nueral Network)
+## CNN(Convolutional Nueral Network) - for only test
 def cnn_base(row, column, channel):
     input_tensor = Input(shape=(row, column, channel)) # 배치제외 3차원
     
