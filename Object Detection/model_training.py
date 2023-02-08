@@ -35,7 +35,7 @@ except:
 #dji_df = module.convert_data(100, 'DJI_Phantom4', '1')
 #df = pd.concat([autel_df,dji_df])
 #df.to_pickle("UAV.pkl") # save data to pickle
-df = pd.read_pickle("UAV.pkl")
+df = pd.read_pickle("save/UAV.pkl")
 accuracy = [] # save accuracy
 
 # processing
@@ -53,6 +53,7 @@ EPOCHS = 15
 nn_model = module.neural_base(40) # Match with column
 nn_model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 nn_history = nn_model.fit(x_train, y_train_oh, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
+nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
 ## Model evaluate
 nn_accuracy = nn_model.evaluate(x_test, y_test_oh)[1]
 accuracy.append(nn_accuracy)

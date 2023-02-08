@@ -124,3 +124,5 @@ def show_history(history):
     plt.plot(history.history['accuracy'], label='train')
     plt.plot(history.history['val_accuracy'], label='valid')
     plt.legend()
+    
+
