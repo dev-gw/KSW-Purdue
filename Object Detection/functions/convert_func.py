@@ -21,3 +21,5 @@ converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS,
 tflite_model = converter.convert()
 open('save/test1.tflite', 'wb').write(tflite_model)
 
+
+

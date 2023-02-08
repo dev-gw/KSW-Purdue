@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import module
+import joblib
 
 import tensorflow as tf
 from sklearn import svm
@@ -62,6 +63,7 @@ accuracy.append(nn_accuracy)
 ## training
 svm_model = module.svm_base(C=10, kernel='linear')
 svm_model.fit(x_train, y_train)
+joblib.dump(svm_model, 'save/svm_model.pkl') # save model
 ## Model evaluate
 svm_accuracy = svm_model.score(x_test, y_test)
 accuracy.append(svm_accuracy)
@@ -70,6 +72,7 @@ accuracy.append(svm_accuracy)
 ## training
 knn_model = module.knn_base(n_neighbors=6)
 knn_model.fit(x_train, y_train)
+joblib.dump(knn_model, 'save/knn_model.pkl') # save model
 ## Model evaluate
 knn_accuracy = knn_model.score(x_test, y_test)
 accuracy.append(knn_accuracy)
@@ -78,6 +81,7 @@ accuracy.append(knn_accuracy)
 ## training
 gnb_model = module.gnb_base()
 gnb_model.fit(x_train, y_train)
+joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
 ## Model evaluate
 gnb_accuracy = gnb_model.score(x_test, y_test)
 accuracy.append(gnb_accuracy)
