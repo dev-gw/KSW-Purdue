@@ -5,7 +5,7 @@
 Object Detection/Dataset
 Object Detection/*.pkl
 Object Detection/__pycache__
-
+Object Detection/save
 
 ### macOS ###
 # General

@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import module
+import joblib
 
 import tensorflow as tf
 from sklearn import svm
@@ -35,7 +36,7 @@ except:
 #dji_df = module.convert_data(100, 'DJI_Phantom4', '1')
 #df = pd.concat([autel_df,dji_df])
 #df.to_pickle("UAV.pkl") # save data to pickle
-df = pd.read_pickle("UAV.pkl")
+df = pd.read_pickle("save/UAV.pkl")
 accuracy = [] # save accuracy
 
 # processing
@@ -53,6 +54,7 @@ EPOCHS = 15
 nn_model = module.neural_base(40) # Match with column
 nn_model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 nn_history = nn_model.fit(x_train, y_train_oh, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
+nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
 ## Model evaluate
 nn_accuracy = nn_model.evaluate(x_test, y_test_oh)[1]
 accuracy.append(nn_accuracy)
@@ -61,6 +63,7 @@ accuracy.append(nn_accuracy)
 ## training
 svm_model = module.svm_base(C=10, kernel='linear')
 svm_model.fit(x_train, y_train)
+joblib.dump(svm_model, 'save/svm_model.pkl') # save model
 ## Model evaluate
 svm_accuracy = svm_model.score(x_test, y_test)
 accuracy.append(svm_accuracy)
@@ -69,6 +72,7 @@ accuracy.append(svm_accuracy)
 ## training
 knn_model = module.knn_base(n_neighbors=6)
 knn_model.fit(x_train, y_train)
+joblib.dump(knn_model, 'save/knn_model.pkl') # save model
 ## Model evaluate
 knn_accuracy = knn_model.score(x_test, y_test)
 accuracy.append(knn_accuracy)
@@ -77,6 +81,7 @@ accuracy.append(knn_accuracy)
 ## training
 gnb_model = module.gnb_base()
 gnb_model.fit(x_train, y_train)
+joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
 ## Model evaluate
 gnb_accuracy = gnb_model.score(x_test, y_test)
 accuracy.append(gnb_accuracy)
