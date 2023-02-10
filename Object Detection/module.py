@@ -10,7 +10,7 @@ from sklearn import svm, naive_bayes, neighbors
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Input, Dense, Dropout, Conv2D, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
+from tensorflow.keras.layers import Input, Dense, Dropout, Conv1D, Conv2D, Flatten, Activation, MaxPooling2D , GlobalAveragePooling2D
 import joblib
 import librosa
 from tensorflow.keras.optimizers import Adam , RMSprop 
@@ -64,6 +64,7 @@ def convert_data(length,company,label):
 def svm_base(C, kernel):
     svm_model = svm.SVC(C=C, kernel=kernel)
     return svm_model
+## libSVM for implementation
 
 ## GNB (Gaussian Naive Bayes)
 def gnb_base():
@@ -92,28 +93,17 @@ def neural_base(column):
     return model
 
 ## CNN(Convolutional Nueral Network) - for only test
-def cnn_base(row, column, channel):
-    input_tensor = Input(shape=(row, column, channel)) # 배치제외 3차원
+def cnn_base(column, channel):
+    input_tensor = Input(shape=(column, channel)) # 배치제외 3차원
     
-    x = Conv2D(filters=32, kernel_size=(2,2), padding='same')(input_tensor)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    x = Conv1D(16,16, activation='relu')(input_tensor)
+    x = Conv1D(16,16, activation='relu')(x)
+    
+    x = Flatten()(x)
+    
+    x = Dense(32, activation = 'relu')(x)
     x = Dropout(rate=0.2)(x)
     
-    x = Conv2D(filters=64, kernel_size=(2,2), padding='same')(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2,2))(x)
-    x = Dropout(rate=0.2)(x)
-    
-    x = Conv2D(filters=128, kernel_size=(2,2), padding='same')(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2,2))(x)
-    x = Dropout(rate=0.2)(x)
-    
-    # GlobalAveragePooling
-    x = GlobalAveragePooling2D()(x)
     output = Dense(2, activation='softmax', name='output')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
