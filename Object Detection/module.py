@@ -17,6 +17,7 @@ from tensorflow.keras.optimizers import Adam , RMSprop
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import ReduceLROnPlateau , EarlyStopping , ModelCheckpoint , LearningRateScheduler
 
+# Change name of audio file
 def name_change():
     file_path = 'Dataset/DJI_Phantom4'
     file_names = os.listdir(file_path)
@@ -46,6 +47,7 @@ def extract_feature(signal, sr):
 
     return mfcc
 
+# Convert data to dataframe
 def convert_data(length,company,label):
     features = []     
     for index in range(1,length+1):
