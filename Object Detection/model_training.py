@@ -2,6 +2,8 @@
 """
 @author: Gwangwon Kim
 
+version 2.2
+
 """
 import os
 import glob
@@ -15,6 +17,7 @@ import tensorflow as tf
 from sklearn import svm
 from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 from keras.utils import to_categorical
 
 from tensorflow.keras.models import Sequential, Model
@@ -58,6 +61,7 @@ nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
 ## Model evaluate
 nn_accuracy = nn_model.evaluate(x_test, y_test_oh)[1]
 accuracy.append(nn_accuracy)
+print("nn : ", classification_report(nn_model.predict(x_test), y_test))
 
 # SVM
 ## training
@@ -67,6 +71,7 @@ joblib.dump(svm_model, 'save/svm_model.pkl') # save model
 ## Model evaluate
 svm_accuracy = svm_model.score(x_test, y_test)
 accuracy.append(svm_accuracy)
+print("svm : ", classification_report(svm_model.predict(x_test), y_test))
 
 # KNN
 ## training
@@ -76,6 +81,7 @@ joblib.dump(knn_model, 'save/knn_model.pkl') # save model
 ## Model evaluate
 knn_accuracy = knn_model.score(x_test, y_test)
 accuracy.append(knn_accuracy)
+print("knn : ", classification_report(knn_model.predict(x_test), y_test))
 
 # GNB
 ## training
@@ -85,12 +91,21 @@ joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
 ## Model evaluate
 gnb_accuracy = gnb_model.score(x_test, y_test)
 accuracy.append(gnb_accuracy)
+print("gnb : ", classification_report(svm_model.predict(x_test), y_test))
 
 # print training result
 score_table = pd.DataFrame(accuracy, index=['NN','SVM','KNN','GNB'], columns=['mfcc']) 
 print(score_table)
 
-
+'''
+# CNN
+x_train_cnn = tf.reshape(x_train,[160,40,1])
+x_test_cnn = tf.reshape(x_test, [40,40,1])
+cnn_model = module.cnn_base(40,1)
+cnn_model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
+cnn_history = cnn_model.fit(x_train_cnn, y_train_oh, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
+# Model evaluate
+cnn_accuracy = cnn_model.evaluate(x_test_cnn, y_test_oh)[1]'''
 
 
 
