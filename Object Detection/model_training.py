@@ -2,7 +2,7 @@
 """
 @author: Gwangwon Kim
 
-version 2.2
+version 2.3
 
 """
 import os
@@ -19,6 +19,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from keras.utils import to_categorical
+import datetime
 
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Input, Dense , Conv2D , Dropout , Flatten , Activation, MaxPooling2D , GlobalAveragePooling2D
@@ -34,54 +35,63 @@ try:
 except:
     pass
 
-# Data input 
-#autel_df = module.convert_data(100, 'Autel_Evo2', '0')
-#dji_df = module.convert_data(100, 'DJI_Phantom4', '1')
-#df = pd.concat([autel_df,dji_df])
-#df.to_pickle("UAV.pkl") # save data to pickle
-df = pd.read_pickle("save/UAV.pkl")
-accuracy = [] # save accuracy
+# Data input
+#extract_start_time = datetime.datetime.now()
+'''
+autel_df = module.convert_data(100, 'Autel_Evo2', 0)
+dji_df = module.convert_data(100, 'DJI_Phantom4', 0)
+noise_df = module.convert_data(200, 'noise', 1)
+df = pd.concat([autel_df, dji_df, noise_df])
+df.to_pickle("save/mel_all.pkl") # save data to pickle
+'''
+df = pd.read_pickle("save/mfcc_all.pkl")
+#extract_total_time = datetime.datetime.now() - extract_start_time # calculate computing time
 
 # processing
 X = np.array(df.feature.tolist())
 y = np.array(df.class_label.tolist())
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2023)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=20)
 ## for Neural network
 y_oh = to_categorical(y)
-x_train, x_test, y_train_oh, y_test_oh = train_test_split(X, y_oh, test_size=0.2, random_state=2023)
+x_train, x_test, y_train_nn, y_test_nn = train_test_split(X, y_oh, test_size=0.3, random_state=20)
 
 # NN
 BATCH_SIZE = 32
 EPOCHS = 15
 ## training
-nn_model = module.neural_base(40) # Match with column
+nn_model_start_time = datetime.datetime.now()
+nn_model = module.neural_base(x_train.shape[1]) # Match with column
 nn_model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
-nn_history = nn_model.fit(x_train, y_train_oh, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
+nn_history = nn_model.fit(x_train, y_train_nn, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
 nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
+nn_model_training_time = datetime.datetime.now() - nn_model_start_time
 ## Model evaluate
-nn_accuracy = nn_model.evaluate(x_test, y_test_oh)[1]
-accuracy.append(nn_accuracy)
-print("nn : ", classification_report(nn_model.predict(x_test), y_test))
+#nn_accuracy = nn_model.evaluate(x_test_nn, y_test_nn)[1]
+nn_model.predict(x_test)
+predicted_class = np.argmax(nn_model.predict(x_test), axis=1)
+print("nn : ", classification_report(y_test, predicted_class))                       
 
 # SVM
 ## training
+svm_start_time = datetime.datetime.now()
 svm_model = module.svm_base(C=10, kernel='linear')
 svm_model.fit(x_train, y_train)
 joblib.dump(svm_model, 'save/svm_model.pkl') # save model
+svm_training_time = datetime.datetime.now() - svm_start_time
 ## Model evaluate
 svm_accuracy = svm_model.score(x_test, y_test)
-accuracy.append(svm_accuracy)
-print("svm : ", classification_report(svm_model.predict(x_test), y_test))
+print("svm : ", classification_report(y_test, svm_model.predict(x_test)))
 
 # KNN
 ## training
+knn_start_time = datetime.datetime.now()
 knn_model = module.knn_base(n_neighbors=6)
 knn_model.fit(x_train, y_train)
 joblib.dump(knn_model, 'save/knn_model.pkl') # save model
+knn_total_time = datetime.datetime.now() - knn_start_time
 ## Model evaluate
-knn_accuracy = knn_model.score(x_test, y_test)
-accuracy.append(knn_accuracy)
-print("knn : ", classification_report(knn_model.predict(x_test), y_test))
+#knn_accuracy = knn_model.score(x_test, y_test)
+print("knn : ", classification_report(y_test, knn_model.predict(x_test)))
 
 # GNB
 ## training
@@ -89,13 +99,9 @@ gnb_model = module.gnb_base()
 gnb_model.fit(x_train, y_train)
 joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
 ## Model evaluate
-gnb_accuracy = gnb_model.score(x_test, y_test)
-accuracy.append(gnb_accuracy)
-print("gnb : ", classification_report(svm_model.predict(x_test), y_test))
+#gnb_accuracy = gnb_model.score(x_test, y_test)
+print("gnb : ", classification_report(y_test, gnb_model.predict(x_test)))
 
-# print training result
-score_table = pd.DataFrame(accuracy, index=['NN','SVM','KNN','GNB'], columns=['mfcc']) 
-print(score_table)
 
 '''
 # CNN
