@@ -64,7 +64,7 @@ nn_model_training_time = datetime.datetime.now() - nn_model_start_time
 #nn_accuracy = nn_model.evaluate(x_test_nn, y_test_nn)[1]
 nn_model.predict(x_test)
 predicted_class = np.argmax(nn_model.predict(x_test), axis=1)
-print("nn : ", classification_report(y_test, predicted_class))                       
+print("----- NN model -----\n", classification_report(y_test, predicted_class))                       
 
 # SVM
 ## training
@@ -75,7 +75,7 @@ joblib.dump(svm_model, 'save/svm_model.pkl') # save model
 svm_training_time = datetime.datetime.now() - svm_start_time
 ## Model evaluate
 svm_accuracy = svm_model.score(x_test, y_test)
-print("svm : ", classification_report(y_test, svm_model.predict(x_test)))
+print("----- SVM model -----\n", classification_report(y_test, svm_model.predict(x_test)))
 
 # KNN
 ## training
@@ -86,7 +86,7 @@ joblib.dump(knn_model, 'save/knn_model.pkl') # save model
 knn_total_time = datetime.datetime.now() - knn_start_time
 ## Model evaluate
 #knn_accuracy = knn_model.score(x_test, y_test)
-print("knn : ", classification_report(y_test, knn_model.predict(x_test)))
+print("----- KNN model -----\n", classification_report(y_test, knn_model.predict(x_test)))
 
 # GNB
 ## training
@@ -95,11 +95,11 @@ gnb_model.fit(x_train, y_train)
 joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
 ## Model evaluate
 #gnb_accuracy = gnb_model.score(x_test, y_test)
-print("gnb : ", classification_report(y_test, gnb_model.predict(x_test)))
+print("----- GNB model -----\n", classification_report(y_test, gnb_model.predict(x_test)))
 
 
 '''
-# CNN
+# CNN - appendix
 x_train_cnn = tf.reshape(x_train,[160,40,1])
 x_test_cnn = tf.reshape(x_test, [40,40,1])
 cnn_model = module.cnn_base(40,1)

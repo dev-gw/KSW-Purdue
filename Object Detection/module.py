@@ -16,6 +16,8 @@ import librosa
 from tensorflow.keras.optimizers import Adam , RMSprop 
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import ReduceLROnPlateau , EarlyStopping , ModelCheckpoint , LearningRateScheduler
+import warnings
+warnings.filterwarnings(action='ignore')
 
 # Feature Extraction
 def extract_feature(signal, sr, feature):
@@ -91,7 +93,7 @@ def neural_base(column):
     model.summary()
     return model
 
-## CNN(Convolutional Nueral Network) - test only
+## CNN(Convolutional Nueral Network) - appendix
 def cnn_base(column, channel):
     input_tensor = Input(shape=(column, channel))
     
