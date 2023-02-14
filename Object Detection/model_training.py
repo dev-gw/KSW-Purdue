@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """
+Train and save models 
+- NN
+- SVM
+- KNN
+- GNB 
+
 @author: Gwangwon Kim
-
-version 2.3
-
+version 2.4
 """
 import os
 import glob
@@ -35,17 +39,8 @@ try:
 except:
     pass
 
-# Data input
-#extract_start_time = datetime.datetime.now()
-'''
-autel_df = module.convert_data(100, 'Autel_Evo2', 0)
-dji_df = module.convert_data(100, 'DJI_Phantom4', 0)
-noise_df = module.convert_data(200, 'noise', 1)
-df = pd.concat([autel_df, dji_df, noise_df])
-df.to_pickle("save/mel_all.pkl") # save data to pickle
-'''
+# Data input - pkl format
 df = pd.read_pickle("save/mfcc_all.pkl")
-#extract_total_time = datetime.datetime.now() - extract_start_time # calculate computing time
 
 # processing
 X = np.array(df.feature.tolist())

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@author: Gwangwon Kim
+Return classification result
 
+@author: Gwangwon Kim
+version 1.0
 """
 import os
 import glob
