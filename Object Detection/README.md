@@ -40,6 +40,7 @@ conda create -n uavml python==3.9.13
 conda activate uavml   
 
 # Run training code   
+## If error, try 'sudo apt install make'
 make env
 make train
 ```
