@@ -20,7 +20,8 @@ librosa 0.9.2
 libsvm 3.3.0
 ```   
 
-## To run this code   
+## To run this code
+* Download Object Detection folder into your directory.
 ### Linux
 
 ```bash
