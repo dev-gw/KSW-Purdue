@@ -18,6 +18,7 @@ conda create -n (EDIT NAME) python==3.9.13
 conda activate (EDIT NAME)   
 
 # Run training code   
+make env
 make train
 ```
 
