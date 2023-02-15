@@ -21,7 +21,8 @@ libsvm 3.3.0
 ```   
 
 ## To run this code
-* Download Object Detection folder into your directory.
+* Download Object_Detection folder   
+* Copy and paste files in your working directory.
 ### Linux
 
 ```bash
