@@ -38,6 +38,8 @@ $ . ~/.bashrc
 # Make virtual environment   
 conda create -n uavml python==3.9.13   
 conda activate uavml   
+sudo apt-get install libsndfile1   
+sudo apt-get install make
 
 # Run training code   
 make env
