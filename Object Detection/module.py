@@ -16,48 +16,49 @@ import librosa
 from tensorflow.keras.optimizers import Adam , RMSprop 
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import ReduceLROnPlateau , EarlyStopping , ModelCheckpoint , LearningRateScheduler
-
-# Change name of audio file
-def name_change():
-    file_path = 'Dataset/DJI_Phantom4'
-    file_names = os.listdir(file_path)
-    i = 1
-    for name in file_names:
-        src = os.path.join(file_path, name)
-        dst = str(i)+'.wav'
-        dst = os.path.join(file_path, dst)
-        os.rename(src,dst)
-        i+=1
+import warnings
+warnings.filterwarnings(action='ignore')
 
 # Feature Extraction
-def extract_feature(signal, sr):
-    try:
-        # select feature
-        ## Except CNN, np.mean method is needed.
-        mfcc = librosa.feature.mfcc(signal,sr=sr,n_mfcc=40)
-        #mel = librosa.feature.melspectrogram(signal,sr=sr).T
-        #chroma_stft = librosa.feature.chroma_stft(signal, sr).T
-        #contrast = librosa.feature.stft(S=np.abs(librosa.stft(signal)),sr=sr).T
-        #tonnetz = librosa.feature.tonnetz(y=librosa.effects.harmonic(signal),sr=sr).T
-        
-    except Exception as e:
+def extract_feature(signal, sr, feature):
+    # select feature
+    if feature == 'mfcc':
+        data = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T, axis=0)
+    elif feature == 'mel':
+        data = np.mean(librosa.feature.melspectrogram(signal,sr=sr,n_mels=40).T,axis=0)
+    elif feature == 'chroma':
+        data = np.mean(librosa.feature.chroma_stft(signal, sr).T, axis=0)
+    elif feature == 'contrast':
+           data = np.mean(librosa.feature.spectral_contrast(S=np.abs(librosa.stft(signal)),sr=sr).T,axis=0)
+    elif feature == 'tonnetz':
+        data = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(signal),sr=sr).T,axis=0)
+    else:
         print("Error when extract feature")
-        print(e)
         return None
+    return data
 
-    return mfcc
 
 # Convert data to dataframe
-def convert_data(length,company,label):
+def convert_data(length,company,label, feature):
     features = []     
     for index in range(1,length+1):
         file_name = 'Dataset/'+ company + '/' + str(index) + '.wav'
         # mfcc extract
         signal, sr = librosa.load(file_name, sr=22050)
-        data = extract_feature(signal, sr)
+        data = extract_feature(signal, sr, feature)
         features.append([data,label]) # drone class
         featuredf = pd.DataFrame(features, columns=['feature', 'class_label'])
     return featuredf
+
+
+# Concat and Save dataframe
+## feature : mfcc, mel, chroma, contrast, tonnetz
+def concat_data(feature):
+    autel_df = convert_data(100, 'Autel_Evo2', 0, feature)
+    dji_df = convert_data(100, 'DJI_Phantom4', 0, feature)
+    noise_df = convert_data(200, 'noise', 1, feature)
+    df = pd.concat([autel_df, dji_df, noise_df])
+    df.to_pickle('save/' + feature +  '_all.pkl') # save dataframe to pickle
 
 # Modeling
 ## SVM(Support Vector Machine)
@@ -92,9 +93,9 @@ def neural_base(column):
     model.summary()
     return model
 
-## CNN(Convolutional Nueral Network) - for only test
+## CNN(Convolutional Nueral Network) - appendix
 def cnn_base(column, channel):
-    input_tensor = Input(shape=(column, channel)) # 배치제외 3차원
+    input_tensor = Input(shape=(column, channel))
     
     x = Conv1D(16,16, activation='relu')(input_tensor)
     x = Conv1D(16,16, activation='relu')(x)
@@ -110,11 +111,12 @@ def cnn_base(column, channel):
     model.summary()
     return model
 
+# Visualize training graph
 def show_history(history):
     plt.figure(figsize=(6,6))
     plt.yticks(np.arange(0,1,0.05))
     plt.plot(history.history['accuracy'], label='train')
     plt.plot(history.history['val_accuracy'], label='valid')
     plt.legend()
-    
 
+# concat_data('mfcc')

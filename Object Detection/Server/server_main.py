@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@author: Gwangwon Kim
+Return classification result
 
+@author: Gwangwon Kim
+version 1.0
 """
 import os
 import glob
@@ -30,6 +32,9 @@ def detect_result():
     
     data_path = sys.argv[1]
     model_path = sys.argv[2]
+    
+    data_path = 'Dataset/trim_test/3.wav'
+    model_path = 'save/svm_model.pkl'
     # Test data for server
 
     # Model load
@@ -44,7 +49,11 @@ def detect_result():
 
     # prediction
     result = svm_model.predict(X)[0]
-    
+    print(result)
     return result
+
+
+
+
 
     
