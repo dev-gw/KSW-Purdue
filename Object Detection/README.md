@@ -14,8 +14,8 @@ or
 $ . ~/.bashrc
 
 # Make virtual environment   
-conda create -n (EDIT NAME) python==3.9.13   
-conda activate (EDIT NAME)   
+conda create -n uavml python==3.9.13   
+conda activate uavml   
 
 # Run training code   
 make env
