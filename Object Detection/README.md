@@ -5,14 +5,14 @@
 * Return classification results to server.   
 
 ```bash
-├── save
-│   └── mfcc_3.pkl
 ├── functions
 │   ├── function_test.py
 │   └── processing_func.py
-├── server_main.py
+├── save
+│   └── mfcc_3.pkl
+├── module.py
 ├── model_training.py
-└── module.py
+└── server_main.py
 ``` 
 
 ## Dependencies   
