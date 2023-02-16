@@ -1,5 +1,19 @@
-## Machine Learning part   
+## Machine Learning part  
+   
+* Extract features of UAV data.
+* Train machine learning models and compare performances.
+* Return classification results to server.   
 
+```bash
+├── save
+│   └── mfcc_3.pkl
+├── functions
+│   ├── function_test.py
+│   └── processing_func.py
+├── server_main.py
+├── model_training.py
+└── module.py
+``` 
 
 ## Dependencies   
 ```
