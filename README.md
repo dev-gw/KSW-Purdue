@@ -23,7 +23,7 @@ Deep Learning based Real Time Acoustic UAV Detection using Smartphone as Edge Co
 
 📆 Project Period
 ```
-2023.01 ~ 2023.03 (in Purdue University)
+2023.01 ~ 2023.03 (in Purdue University, West Lafayette)
 ```
 
 📌 Problem Statement
