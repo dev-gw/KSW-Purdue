@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rotate
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:toDegrees="720">
+    <shape android:shape="oval">
+        <size
+            android:height="48dp"
+            android:width="48dp" />
+        <gradient
+            android:id="@+id/circle_progress1"
+            android:type="sweep"
+            android:startColor="#00000000"
+            android:centerColor="#60C3BA"
+            android:endColor="#009688" />
+    </shape>
+</rotate>
