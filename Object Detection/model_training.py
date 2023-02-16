@@ -38,15 +38,14 @@ except:
     pass
 
 # Data input - pkl format
-df = pd.read_pickle("save/mfcc_all.pkl")
-
+df = pd.read_pickle("save/mfcc_3.pkl")
 # processing
 X = np.array(df.feature.tolist())
 y = np.array(df.class_label.tolist())
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=20)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=23)
 ## for Neural network
-y_oh = to_categorical(y)
-x_train, x_test, y_train_nn, y_test_nn = train_test_split(X, y_oh, test_size=0.3, random_state=20)
+y_oh = to_categorical(y) # make 2-dimensions
+x_train, x_test, y_train_nn, y_test_nn = train_test_split(X, y_oh, test_size=0.2, random_state=23)
 time_dict = {} # Measure training time
 
 # NN
@@ -55,7 +54,7 @@ EPOCHS = 15
 ## training
 nn_model_start_time = time.time()
 nn_model = module.neural_base(x_train.shape[1]) # Match with column
-nn_model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
+nn_model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 nn_history = nn_model.fit(x_train, y_train_nn, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
 nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
 time_dict['NN'] = time.time() - nn_model_start_time
