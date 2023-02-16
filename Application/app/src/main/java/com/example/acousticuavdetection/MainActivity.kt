@@ -55,8 +55,8 @@ class MainActivity : AppCompatActivity() {
     fun Timerfun(){
         timer = timer(period = 100){
             if(deltaTime > 100) cancel()
-            progressBarPhone.setProgress(++deltaTime)
-            println(progressBarPhone.progress)
+            progressBar.setProgress(++deltaTime)
+            println(progressBar.progress)
         }
     }
 
