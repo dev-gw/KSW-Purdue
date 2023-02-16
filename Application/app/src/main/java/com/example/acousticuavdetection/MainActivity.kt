@@ -1,65 +1,130 @@
 package com.example.acousticuavdetection
 
+import android.Manifest
+import android.content.ContentValues.TAG
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_phone.*
-import java.util.*
+import com.example.acousticuavdetection.databinding.ActivityMainBinding
+import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
+import com.example.acousticuavdetection.databinding.FragmentServerBinding
+import com.example.acousticuavdetection.feature.FeatureExtraction
+import org.merlyn.kotlinspeechfeatures.MathUtils
+import org.merlyn.kotlinspeechfeatures.SpeechFeatures
 import kotlin.collections.ArrayList
-import kotlin.concurrent.timer
+
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding_main: ActivityMainBinding
+    private lateinit var binding_phone: FragmentPhoneBinding
+    private lateinit var binding_server: FragmentServerBinding
     var viewList = ArrayList<View>()
-    var timer : Timer? = null
-    var deltaTime = 0
+    private lateinit var mStartButton : Button
+    private var mRecorder: AudioRecorder? = null
+    private var mIsRecording = false
+    //private val speechFeatures = SpeechFeatures()
+    private val viewModel: FeatureExtraction by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        checkNeededPermissions()
+
+        binding_main = ActivityMainBinding.inflate(layoutInflater)
+        binding_phone = FragmentPhoneBinding.inflate(layoutInflater)
+        binding_server = FragmentServerBinding.inflate(layoutInflater)
+        setContentView(binding_main.root)
 
         val actionBar: ActionBar? = supportActionBar
-        actionBar?.hide()
+        actionBar?.hide() // Hide Top Application bar with application name
 
         viewList.add(layoutInflater.inflate(R.layout.fragment_phone, null))
         viewList.add(layoutInflater.inflate(R.layout.fragment_server, null))
 
-        //startBtn.setOnClickListener{ Timerfun() }
-        //stopBtn.setOnClickListener{ timer?.cancel() }
 
-        viewPager.adapter = pagerAdapter()
+        binding_main.viewPager.adapter = pagerAdapter()
 
-        tabLayout.setupWithViewPager(viewPager) // tab과 viewPager 연결
-        tabLayout.getTabAt(0)?.setText("phone")
-        tabLayout.getTabAt(1)?.setText("server")
-        tabLayout.getTabAt(0)?.setIcon(R.drawable.baseline_speaker_phone_24)
-        tabLayout.getTabAt(1)?.setIcon(R.drawable.baseline_device_hub_24)
-        /*
-
-        val tabLayout: TabLayout = findViewById(R.id.tabLayout)
-        // Set onClickListener for start button
-        startButton.setOnClickListener {
-            startRecording()
-        }
-
-        // Set onClickListener for stop button
-        stopButton.setOnClickListener {
-            stopRecording()
-        }
-        */
+        binding_main.tabLayout.setupWithViewPager(binding_main.viewPager) // tab과 viewPager 연결
+                binding_main.tabLayout.getTabAt(0)?.setText("phone")
+                binding_main.tabLayout.getTabAt(1)?.setText("server")
+                binding_main.tabLayout.getTabAt(0)?.setIcon(R.drawable.baseline_speaker_phone_24)
+                binding_main.tabLayout.getTabAt(1)?.setIcon(R.drawable.baseline_device_hub_24)
     }
 
-    fun Timerfun(){
-        timer = timer(period = 100){
-            if(deltaTime > 100) cancel()
-            progressBar.setProgress(++deltaTime)
-            println(progressBar.progress)
+    fun fabClick(view: View) {
+        if (!mIsRecording) {
+            runOnUiThread(
+                Runnable {
+                    startRecording()
+                    mIsRecording = !mIsRecording
+                }
+            )
+        } else {
+            runOnUiThread(
+                Runnable {
+                    stopRecording()
+                    mIsRecording = !mIsRecording
+                }
+            )
         }
     }
 
+    fun fab2Click (view: View) {
+        Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
+        viewModel.performMfcc()
+    }
+    private fun checkNeededPermissions() {
+        println("Requesting permission")
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED) {
+            println("Requesting permission")
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO), 0)
+        }
+    }
+    /*
+    override fun onStart() {
+        super.onStart()
+        binding_phone.fab!!.setOnClickListener(this)
+    }
+    override fun onClick(v: View?){
+        Toast.makeText(this, "Recording Clicked", Toast.LENGTH_SHORT).show()
+        when (v?.id) {
+            R.id.fab -> {
+
+            }
+        }
+    }
+    */
+
+    private fun startRecording() {
+        val outputFile = "${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio"
+        mRecorder = AudioRecorder()
+        mRecorder?.setOutputFile(outputFile)
+        mRecorder?.startRecording()
+        //mRecorder?.splitAudioFile()
+        Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, outputFile, Toast.LENGTH_SHORT).show()
+    }
+    private fun stopRecording() {
+        mRecorder?.stopRecording()
+        mRecorder = null
+        Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
+    }
     inner class pagerAdapter() : PagerAdapter() {
         override fun isViewFromObject(view: View, `object`: Any) = view == `object` // 뷰랑 오브젝트가 같냐
 
@@ -67,12 +132,13 @@ class MainActivity : AppCompatActivity() {
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             var curView = viewList[position]
-            viewPager.addView(curView)
+            binding_main.viewPager.addView(curView)
             return curView
         }
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            viewPager.removeView(`object` as View)
+            binding_main.viewPager.removeView(`object` as View)
         }
 
     }
 }
+
