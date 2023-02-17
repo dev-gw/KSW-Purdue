@@ -28,7 +28,7 @@ public:
 
 	int32	GetHandle() { return _epollHandle; }
 
-	bool	Register(EpollObjectRef epollObject);
+	bool	Register(EpollObjectRef epollObject, EpollEvent* epollEvent);
 	bool	Dispatch(uint32 timeoutMs = INFINITE);
 
 

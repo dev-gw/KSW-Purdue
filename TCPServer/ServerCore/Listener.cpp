@@ -31,6 +31,10 @@ bool Listener::StartAccept(ServerServiceRef service)
 	if (_socket == INVALID_SOCKET)
 		return false;
 
+	//EpollEvent* acceptEvent = new AcceptEvent();
+	//if (_service->GetEpollCore()->Register(shared_from_this(), acceptEvent) == false)
+	//	return false;
+
 	if (SocketUtils::SetReuseAddress(_socket, true) == false)
 		return false;
 
@@ -46,8 +50,6 @@ bool Listener::StartAccept(ServerServiceRef service)
 	if (SocketUtils::Listen(_socket) == false)
 		return false;
 
-	if (_service->GetEpollCore()->Register(shared_from_this()) == false)
-		return false;
 
 	const int32 acceptCount = _service->GetMaxSessionCount();
 	for (int32 i = 0; i < acceptCount; i++)
@@ -87,23 +89,39 @@ void Listener::RegisterAccept(AcceptEvent* acceptEvent)
 	acceptEvent->Init();
 	acceptEvent->session = session;
 
-	SOCKET newSocket;
 
 	if (_registeredOnEpoll == false)
 	{
 		_registeredOnEpoll.store(true);
-		newSocket = _socket;
+		_SocketMap[acceptEvent] = _socket;
+		if (epoll_ctl(_service->GetEpollCore()->GetHandle(), EPOLL_CTL_ADD, _socket, acceptEvent) < 0)
+		{
+			cout << strerror(errno) << endl;
+		}
 	}
 	else
 	{
-		newSocket = fcntl(_socket, F_DUPFD); // Duplicate the socket fd
+		if (_SocketMap.find(acceptEvent) == _SocketMap.end())
+		{
+			SOCKET newSocket = fcntl(_socket, F_DUPFD); // Duplicate the socket fd
+			if (newSocket < 0)
+			{
+				cout << newSocket << "is less than zero" << endl;
+				cout << strerror(errno) << endl;
+				return;
+			}
+			else
+			{
+				_SocketMap[acceptEvent] = newSocket;
+				if (epoll_ctl(_service->GetEpollCore()->GetHandle(), EPOLL_CTL_ADD, newSocket, acceptEvent) < 0)
+				{
+					cout << strerror(errno) << endl;
+				}
+			}
+			
+		}
 	}
-
-	if (_SocketMap.find(acceptEvent) == _SocketMap.end())
-	{
-		_SocketMap[acceptEvent] = newSocket;
-		ASSERT_CRASH(epoll_ctl(_service->GetEpollCore()->GetHandle(), EPOLL_CTL_ADD, newSocket, acceptEvent) < 0);
-	}
+	
 	
 }
 

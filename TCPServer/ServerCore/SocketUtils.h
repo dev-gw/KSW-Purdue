@@ -17,10 +17,10 @@ public:
 	static SOCKET CreateSocket();
 
 	static bool SetLinger(SOCKET socket, uint16 onoff, uint16 inLinger);
-	static bool SetReuseAddress(SOCKET socket, bool flag);
+	static bool SetReuseAddress(SOCKET socket, int32 flag);
 	static bool SetRecvBufferSize(SOCKET socket, int32 size);
 	static bool SetSendBufferSize(SOCKET socket, int32 size);
-	static bool SetTcpNoDelay(SOCKET socket, bool flag);
+	static bool SetTcpNoDelay(SOCKET socket, int32 flag);
 	static bool SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket);
 
 
@@ -35,5 +35,10 @@ public:
 template<typename T>
 static inline bool SetSockOpt(SOCKET inSocket, int32 level, int32 optName, T optVal)
 {
-	return IS_VALID_SOCKET(setsockopt(inSocket, level, optName, reinterpret_cast<char*>(&optVal), sizeof(T)));
+	if (setsockopt(inSocket, level, optName, &optVal, sizeof(T)) < 0)
+	{
+		cout << strerror(errno) << endl;
+		return false;
+	}
+	return true;
 }

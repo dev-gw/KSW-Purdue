@@ -22,11 +22,13 @@ void BaseAllocator::Release(void* ptr)
 
 void* StompAllocator::Alloc(int32 size)
 {
-	int32 memFd = ::open(MEMFD, O_RDWR | O_SYNC);
+	//int32 memFd = ::open(MEMFD, O_RDWR | O_SYNC);
 	const int64 pageCount = (size + PAGE_SIZE - 1) / PAGE_SIZE;
 	const int64 dataOffset = pageCount * PAGE_SIZE - size;
-	void* baseAddress = mmap(NULL, pageCount * PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, 0);
-	::close(memFd);
+	void* baseAddress = mmap(NULL, pageCount * PAGE_SIZE, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
+	int commitResult = mprotect(baseAddress, pageCount * PAGE_SIZE, PROT_READ | PROT_WRITE);
+	ASSERT_CRASH(commitResult >= 0);
+	//::close(memFd);
 	return static_cast<void*>(static_cast<int8*>(baseAddress) + dataOffset);
 }
 

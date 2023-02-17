@@ -108,7 +108,7 @@ int main()
     memset(&mSockAddr, 0, sizeof(mSockAddr));
     mSockAddr.sin_family = AF_INET;
     mSockAddr.sin_port = htons(PORTNUM);
-    mSockAddr.sin_addr.s_addr = htonl(INADDR_ANY); // INADDR_ANY : 사용가능한 랜카드 IP 사용
+    mSockAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // INADDR_ANY : 사용가능한 랜카드 IP 사용
 
     // 소켓 속성과 소켓 fd 연결
     error_check = bind(server_fd, (struct sockaddr*)&mSockAddr, sizeof(mSockAddr));
