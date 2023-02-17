@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Return classification result
+Returning classification result
 
 @author: Gwangwon Kim
-version 1.0
+version 1.1
 """
 import os
 import glob
@@ -22,34 +22,24 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 from tensorflow.keras.models import load_model
 
-''' Receive argument 
-    1 : data path
-    2 : model file path '''
-
-def detect_result():
-    argument = sys.argv
-    del argument[0]
+# Main function
+# data_path : sound data file path (.wav)
+# model_path : pretrained model file path (.pkl)
+def detect_result(data_path, model_path):
     
-    data_path = sys.argv[1]
-    model_path = sys.argv[2]
-    
-    data_path = 'Dataset/trim_test/3.wav'
-    model_path = 'save/svm_model.pkl'
-    # Test data for server
-
-    # Model load
-    #nn_model = load_model('save/nn_model.h5')
+    # Load model
     svm_model = joblib.load(model_path)
 
-    # processing
-    signal, sr = librosa.load(data_path) 
+    # Load data
+    signal, sr = librosa.load(data_path)
+    
+    # Extraction
     mfcc = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T, axis=0)
-
     X = np.array(mfcc.tolist()).reshape(1,-1)
 
     # prediction
     result = svm_model.predict(X)[0]
-    print(result)
+    
     return result
 
 

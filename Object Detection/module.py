@@ -19,6 +19,7 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau , EarlyStopping , Model
 import warnings
 warnings.filterwarnings(action='ignore')
 
+
 # Feature Extraction
 def extract_feature(signal, sr, feature):
     # select feature
@@ -55,10 +56,10 @@ def convert_data(length,company,label, feature):
 ## feature : mfcc, mel, chroma, contrast, tonnetz
 def concat_data(feature):
     autel_df = convert_data(100, 'Autel_Evo2', 0, feature)
-    dji_df = convert_data(100, 'DJI_Phantom4', 0, feature)
-    noise_df = convert_data(200, 'noise', 1, feature)
+    dji_df = convert_data(100, 'DJI_Phantom4', 1, feature)
+    noise_df = convert_data(200, 'noise', 2, feature)
     df = pd.concat([autel_df, dji_df, noise_df])
-    df.to_pickle('save/' + feature +  '_all.pkl') # save dataframe to pickle
+    df.to_pickle('save/' + feature +  '_3.pkl') # save dataframe to pickle
 
 # Modeling
 ## SVM(Support Vector Machine)
@@ -87,7 +88,7 @@ def neural_base(column):
     x = Activation('relu')(x)
     x = Dropout(rate=0.1)(x)
 
-    output = Dense(2, activation='sigmoid')(x)
+    output = Dense(3, activation='sigmoid')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
     model.summary()
@@ -105,7 +106,7 @@ def cnn_base(column, channel):
     x = Dense(32, activation = 'relu')(x)
     x = Dropout(rate=0.2)(x)
     
-    output = Dense(2, activation='softmax', name='output')(x)
+    output = Dense(3, activation='softmax', name='output')(x)
     
     model = Model(inputs=input_tensor, outputs=output)
     model.summary()
@@ -119,4 +120,6 @@ def show_history(history):
     plt.plot(history.history['val_accuracy'], label='valid')
     plt.legend()
 
-# concat_data('mfcc')
+if __name__ == '__main__':
+    # Make dataframe using UAV data
+    concat_data('mfcc')
