@@ -10,6 +10,8 @@ import librosa
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import pickle
+from sklearn2pmml import sklearn2pmml
 
 
 # feature extraction test
@@ -52,3 +54,10 @@ tonnetz = librosa.feature.tonnetz(y=librosa.effects.harmonic(y),sr=sr)
 tonnetz_mean = np.mean(tonnetz.T, axis=0)
 print('tonntez: ', tonnetz.shape, 'tonnetz_mean:', tonnetz_mean.shape)
 df.iloc[4] = tonnetz.shape[0]
+
+# Model convert test(pkl -> pmml)
+with open("svm_model.pkl", "rb") as f:
+    model = pickle.load(f)
+    
+sklearn2pmml(model, "svm_model.pmml")
+ 

@@ -56,7 +56,7 @@ nn_model_start_time = time.time()
 nn_model = module.neural_base(x_train.shape[1]) # Match with column
 nn_model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 nn_history = nn_model.fit(x_train, y_train_nn, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_split = 0.1)
-nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
+#nn_model.save('save/nn_model.h5') # Save model and weights(.pb)
 time_dict['NN'] = time.time() - nn_model_start_time
 ## Model evaluate
 #nn_accuracy = nn_model.evaluate(x_test_nn, y_test_nn)[1]
@@ -80,7 +80,7 @@ print("----- SVM model -----\n", classification_report(y_test, svm_model.predict
 knn_start_time = time.time()
 knn_model = module.knn_base(n_neighbors=6)
 knn_model.fit(x_train, y_train)
-joblib.dump(knn_model, 'save/knn_model.pkl') # save model
+#joblib.dump(knn_model, 'save/knn_model.pkl') # save model
 time_dict['KNN'] = time.time() - knn_start_time
 
 ## Model evaluate
@@ -92,7 +92,7 @@ print("----- KNN model -----\n", classification_report(y_test, knn_model.predict
 gnb_start_time = time.time()
 gnb_model = module.gnb_base()
 gnb_model.fit(x_train, y_train)
-joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
+#joblib.dump(gnb_model, 'save/gnb_model.pkl') # save model
 time_dict['GNB'] = time.time() - gnb_start_time
 
 ## Model evaluate
