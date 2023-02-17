@@ -9,6 +9,7 @@
     <ClCompile Include="DetectingSessionManager.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="PacketEnum.cpp" />
+    <ClCompile Include="MLManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Main">
@@ -23,6 +24,7 @@
     <ClInclude Include="DetectingSessionManager.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="PacketEnum.h" />
+    <ClInclude Include="MLManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="pch.h.gch" />
