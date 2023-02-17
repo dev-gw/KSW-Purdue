@@ -10,9 +10,10 @@
 │   └── processing_func.py
 ├── save
 │   └── mfcc_3.pkl
-├── module.py
+├── server
+│   └── server_main.py
 ├── model_training.py
-└── server_main.py
+└── module.py
 ``` 
 
 ## Dependencies   
