@@ -53,7 +53,6 @@ typedef unsigned long		ULONG_PTR;
 typedef unsigned long long int Tick64_t;
 typedef unsigned long int Tick32_t;
 
-#define MEMFD "/dev/mem"
 #define INVALID_SOCKET (SOCKET)(~0)
 
 

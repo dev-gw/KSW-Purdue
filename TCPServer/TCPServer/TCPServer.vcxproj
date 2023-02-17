@@ -85,6 +85,7 @@
     <RemoteIntRelDir>$(RemoteProjectRelDir)/obj/$(Platform)/$(Configuration)</RemoteIntRelDir>
     <RemoteCCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCCompileToolExe>
     <RemoteCppCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCppCompileToolExe>
+    <RemoteLdToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteLdToolExe>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
@@ -95,11 +96,13 @@
     <RemoteIntRelDir>$(RemoteProjectRelDir)/obj/$(Platform)/$(Configuration)</RemoteIntRelDir>
     <RemoteCCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCCompileToolExe>
     <RemoteCppCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCppCompileToolExe>
+    <RemoteLdToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteLdToolExe>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="ClientPacketHandler.cpp" />
     <ClCompile Include="DetectingSession.cpp" />
     <ClCompile Include="DetectingSessionManager.cpp" />
+    <ClCompile Include="MLManager.cpp" />
     <ClCompile Include="TCPServer.cpp" />
     <ClCompile Include="PacketEnum.cpp" />
     <ClCompile Include="PacketProtocol.cpp" />
@@ -110,6 +113,7 @@
     <ClInclude Include="ClientPacketHandler.h" />
     <ClInclude Include="DetectingSession.h" />
     <ClInclude Include="DetectingSessionManager.h" />
+    <ClInclude Include="MLManager.h" />
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="PacketProtocol.h" />
     <ClInclude Include="pch.h" />
@@ -122,11 +126,25 @@
     <ClCompile>
       <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
+    <Link>
+      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <UnresolvedSymbolReferences>true</UnresolvedSymbolReferences>
+      <AdditionalLibraryDirectories>/root/projects/$(SolutionName)/Libraries/Libs/$(Platform)/$(Configuration);/usr/local/;/usr/local/lib/python3.9/config-3.9-x86_64-linux-gnu;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LibraryDependencies>ServerCore</LibraryDependencies>
+      <AdditionalDependencies>-pthread -ldl -lutil -lpython3.9;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
+    <Link>
+      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <UnresolvedSymbolReferences>true</UnresolvedSymbolReferences>
+      <AdditionalLibraryDirectories>/root/projects/$(SolutionName)/Libraries/Libs/$(Platform)/$(Configuration);/usr/local/;/usr/local/lib/python3.9/config-3.9-x86_64-linux-gnu;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LibraryDependencies>ServerCore</LibraryDependencies>
+      <AdditionalDependencies>-pthread -ldl -lutil -lpython3.9;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

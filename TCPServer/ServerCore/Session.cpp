@@ -10,7 +10,7 @@
 
 Session::Session() : _recvBuffer(BUFFER_SIZE)
 {
-	//_socket = SocketUtils::CreateSocket();
+	_socket = SocketUtils::CreateSocket();
 }
 
 Session::~Session()

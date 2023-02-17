@@ -12,7 +12,11 @@ void SocketUtils::Init()
 
 	/* 런타임에 주소 얻어오는 API */
 	SOCKET dummySocket = CreateSocket();
-	ASSERT_CRASH(dummySocket < 0);
+	if (dummySocket < 0)
+	{
+		cout << dummySocket + " : " << errno;
+	}
+	ASSERT_CRASH(dummySocket >= 0);
 	Close(dummySocket);
 }
 
@@ -35,7 +39,7 @@ bool SocketUtils::SetLinger(SOCKET socket, uint16 onoff, uint16 inLinger)
 	return SetSockOpt(socket, SOL_SOCKET, SO_LINGER, option);
 }
 
-bool SocketUtils::SetReuseAddress(SOCKET socket, bool flag)
+bool SocketUtils::SetReuseAddress(SOCKET socket, int32 flag)
 {
 	return SetSockOpt(socket, SOL_SOCKET, SO_REUSEADDR, flag);
 }
@@ -50,7 +54,7 @@ bool SocketUtils::SetSendBufferSize(SOCKET socket, int32 size)
 	return SetSockOpt(socket, SOL_SOCKET, SO_SNDBUF, size);
 }
 
-bool SocketUtils::SetTcpNoDelay(SOCKET socket, bool flag)
+bool SocketUtils::SetTcpNoDelay(SOCKET socket, int32 flag)
 {
 	return SetSockOpt(socket, SOL_SOCKET, TCP_NODELAY, flag);
 }
@@ -59,7 +63,12 @@ bool SocketUtils::SetTcpNoDelay(SOCKET socket, bool flag)
 
 bool SocketUtils::Bind(SOCKET socket, NetAddress netAddr)
 {
-	return IS_VALID_SOCKET(::bind(socket, reinterpret_cast<const sockaddr*>(&netAddr.GetSockAddr()), sizeof(sockaddr_in)));
+	if (::bind(socket, reinterpret_cast<sockaddr*>(&netAddr.GetSockAddr()), sizeof(sockaddr_in)) < 0)
+	{
+		cout << strerror(errno) << endl;
+		return false;
+	}
+	return true;
 }
 
 bool SocketUtils::BindAnyAddress(SOCKET socket, uint16 port)
@@ -69,17 +78,18 @@ bool SocketUtils::BindAnyAddress(SOCKET socket, uint16 port)
 	myAddress.sin_addr.s_addr = ::htonl(INADDR_ANY);
 	myAddress.sin_port = ::htons(port);
 
-	return IS_VALID_SOCKET(::bind(socket, reinterpret_cast<const sockaddr*>(&myAddress), sizeof(myAddress)));
+	return IS_VALID_SOCKET(::bind(socket, reinterpret_cast<sockaddr*>(&myAddress), sizeof(myAddress)));
 }
 
 bool SocketUtils::Listen(SOCKET socket, int32 backlog)
 {
-	return IS_VALID_SOCKET(::listen(socket, backlog));
+	IF_FALSE_PRINT_AND_RETURN_FALSE(::listen(socket, backlog) >= 0);
+	return true;
 }
 
 void SocketUtils::Close(SOCKET& socket)
 {
-	if (socket < 0)
+	if (socket >= 0)
 		close(socket);
 	socket = -1;
 }

@@ -83,6 +83,7 @@
     <RemoteOutRelDir>$(RemoteProjectRelDir)/bin/$(Platform)/$(Configuration)</RemoteOutRelDir>
     <RemoteCCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCCompileToolExe>
     <RemoteCppCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCppCompileToolExe>
+    <RemoteLdToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteLdToolExe>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)ServerCore\;$(SolutionDir)Libraries\Include\;C:\linux\include\;$(IncludePath)</IncludePath>
@@ -91,6 +92,7 @@
     <RemoteOutRelDir>$(RemoteProjectRelDir)/bin/$(Platform)/$(Configuration)</RemoteOutRelDir>
     <RemoteCCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCCompileToolExe>
     <RemoteCppCompileToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteCppCompileToolExe>
+    <RemoteLdToolExe>/opt/rh/devtoolset-8/root/bin/g++</RemoteLdToolExe>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="DummyClient.cpp" />
@@ -106,7 +108,26 @@
   <ItemGroup>
     <None Include="pch.h.gch" />
   </ItemGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalLibraryDirectories>/root/projects/$(SolutionName)/Libraries/Libs/$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LibraryDependencies>ServerCore</LibraryDependencies>
+      <AdditionalDependencies>-pthread;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalLibraryDirectories>/root/projects/$(SolutionName)/Libraries/Libs/$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LibraryDependencies>ServerCore</LibraryDependencies>
+      <AdditionalDependencies>-pthread;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <CppLanguageStandard>c++17</CppLanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

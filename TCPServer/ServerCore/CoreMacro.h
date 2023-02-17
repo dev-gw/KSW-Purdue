@@ -34,8 +34,22 @@
 	if (!(expr))					\
 	{								\
 		CRASH("ASSERT_CRASH");		\
-		assert(expr);	\
+		assert(expr);				\
 	}								\
 }
 
-#define IS_VALID_SOCKET(socket_num) ((socket_num) >= 0)
+#define IS_VALID_SOCKET(socket_num) ((socket_num) != -1)
+
+#define	ERROR_PRINT							\
+{											\
+		cout << strerror(errno) << endl;	\
+}											
+
+#define IF_FALSE_PRINT_AND_RETURN_FALSE(expression)		\
+{														\
+	if ((expression) == false)							\
+	{													\
+		ERROR_PRINT;									\
+		return false;									\
+	}													\
+}														

@@ -3,8 +3,8 @@
 
 EpollCore::EpollCore()
 {
-	_epollHandle = ::epoll_create(1);
-	ASSERT_CRASH(_epollHandle == -1);
+	_epollHandle = ::epoll_create(512);
+	ASSERT_CRASH(_epollHandle >= 0);
 }
 
 EpollCore::~EpollCore()
@@ -12,9 +12,14 @@ EpollCore::~EpollCore()
 	close(_epollHandle);
 }
 
-bool EpollCore::Register(EpollObjectRef epollObject)
+bool EpollCore::Register(EpollObjectRef epollObject, EpollEvent* epollEvent)
 {
-	return IS_VALID_SOCKET(epoll_ctl(_epollHandle, EPOLL_CTL_ADD, epollObject->GetHandle(), epollObject->_event));
+	if (epoll_ctl(_epollHandle, EPOLL_CTL_ADD, epollObject->GetHandle(), epollEvent) < 0)
+	{
+		cout << strerror(errno) << endl;
+		return false;
+	}
+	return true;
 }
 
 bool EpollCore::Dispatch(uint32 timeoutMs)

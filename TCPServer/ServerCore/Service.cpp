@@ -36,8 +36,8 @@ SessionRef Service::CreateSession()
 	SessionRef session = _sessionFactory();
 	session->SetService(shared_from_this());
 
-	if (_epollCore->Register(session) == false)
-		return nullptr;
+	//if (_epollCore->Register(session) == false)
+	//	return nullptr;
 
 	return session;
 }
@@ -90,14 +90,17 @@ bool ServerService::Start()
 {
 	if (CanStart() == false)
 		return false;
+	cout << "CanStart" << endl;
 
 	_listener = MakeShared<Listener>();
 	if (_listener == nullptr)
 		return false;
+	cout << "_listener was set" << endl;
 
 	ServerServiceRef service = static_pointer_cast<ServerService>(shared_from_this());
 	if (_listener->StartAccept(service) == false)
 		return false;
+	cout << "Accepted" << endl;
 
 	return true;
 }
