@@ -10,8 +10,8 @@ public:
 	~MLManager();
 
 	void Init();
-	WAVData ConvertToWAV(BYTE* data);
-	int8 RunModel(const WAVData& content);
+	FeatureData ConvertToWAV(BYTE* data);
+	int8 RunModel(const FeatureData& content);
 
 	string _MLFileName;
 	uint8 _numOfCall = 1;
