@@ -23,7 +23,10 @@ import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.merlyn.kotlinspeechfeatures.MathUtils
 import org.merlyn.kotlinspeechfeatures.SpeechFeatures
+import java.io.File
+import java.time.LocalTime
 import kotlin.collections.ArrayList
+import kotlin.io.path.Path
 
 
 class MainActivity : AppCompatActivity() {
@@ -112,13 +115,29 @@ class MainActivity : AppCompatActivity() {
     */
 
     private fun startRecording() {
-        val outputFile = "${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio"
+        var fileIndex = 0 //index of file
+        var basePath = "${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio"
+        while(File(basePath + String.format(fileIndex.toString(),"%02d")).exists()) {
+            File(basePath + String.format(fileIndex.toString(),"%02d")).delete()
+            fileIndex++
+        }
+
+        fileIndex = 0
+        var recording = true //creates infinite loop
         mRecorder = AudioRecorder()
-        mRecorder?.setOutputFile(outputFile)
+        mRecorder?.setOutputFile(basePath + String.format(fileIndex.toString(),"%02d"))
         mRecorder?.startRecording()
-        //mRecorder?.splitAudioFile()
+        mIsRecording = true
+        do {
+            Thread{
+                fileIndex++
+                Thread.sleep(5000)
+                mRecorder?.setOutputFile(basePath + String.format(fileIndex.toString(),"%02d"))
+            }
+        } while(mIsRecording)
+
         Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, outputFile, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, basePath + String.format(fileIndex.toString(),"%02d"), Toast.LENGTH_SHORT).show()
     }
     private fun stopRecording() {
         mRecorder?.stopRecording()
