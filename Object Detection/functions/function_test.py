@@ -62,21 +62,15 @@ tonnetz_mean = np.mean(tonnetz.T, axis=0)
 print('tonntez: ', tonnetz.shape, 'tonnetz_mean:', tonnetz_mean.shape)
 df.iloc[4] = tonnetz.shape[0]
 
-print(os.getcwd())
-
-# Model convert test(pkl -> pmml)
-model = joblib.load('save/svm_model.pkl')
-pmml_pipe = sklearn2pmml.make_pmml_pipeline(model)
-sklearn2pmml(pmml_pipe, 'save/svm_model.pmml', with_repr=True)
 
 # Data convert test
 df = pd.read_pickle("save/mfcc_3.pkl")
-X = pd.DataFrame(columns=[i for i in range(1, 41)], data = df.feature.tolist())
+X = pd.DataFrame(columns=[name for name in range(1, 41)], data = df.feature.tolist())
 y = pd.DataFrame(columns = ['target'], data = df.class_label.tolist())
 # here you can use the key classifier, if suitable
 pipeline = PMMLPipeline([ ('svm', SVC(C=10, kernel='linear'))])
 #training the model
 pipeline.fit(X, y)
 # exporting the model
-sklearn2pmml(pipeline, 'model.pmml', with_repr = True)
+sklearn2pmml(pipeline, 'save/svm_3.pmml', with_repr = True)
  

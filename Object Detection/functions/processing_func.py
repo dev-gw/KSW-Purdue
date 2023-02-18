@@ -94,7 +94,6 @@ def visualize_feature(feature):
         plt.tight_layout()
     
 if __name__ == '__main__':
-    
     # visualize audio's feature
     visualize_feature('chroma')
 
