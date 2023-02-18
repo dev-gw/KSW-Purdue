@@ -28,25 +28,25 @@ void MLManager::Init()
         fprintf(stderr, "Failed to load \"%s\"\n", _MLFileName);
         ASSERT_CRASH(true == false);
     }
-    
+    _MLFunctionName.push_back("detect_result");
 }
 
-WAVData MLManager::ConvertToWAV(BYTE* data)
+FeatureData MLManager::ConvertToWAV(BYTE* data)
 {
 
 }
 
-int8 MLManager::RunModel(const WAVData& data)
+int8 MLManager::RunModel(const FeatureData& data)
 {
-    PyObject* pArgs, * pValue;
+    PyObject* pFunc, * pArgs, * pValue;
 
     ASSERT_CRASH(_pModule != NULL)
-    _pFunc = PyObject_GetAttrString(_pModule, _MLFunctionName[0].c_str());
+    pFunc = PyObject_GetAttrString(_pModule, _MLFunctionName[0].c_str());
     /* pFunc is a new reference */
 
-    if (_pFunc && PyCallable_Check(_pFunc))
+    if (pFunc && PyCallable_Check(_pFunc))
     {
-        pArgs = PyTuple_New(0);
+        pArgs = PyByteArray_FromStringAndSize(reinterpret_cast<const char*>(data.data()), data.size() * 4);
 
         pValue = PyObject_CallObject(_pFunc, pArgs);
         Py_DECREF(pArgs);
@@ -59,7 +59,7 @@ int8 MLManager::RunModel(const WAVData& data)
         }
         else
         {
-            Py_DECREF(_pFunc);
+            Py_DECREF(pFunc);
             Py_DECREF(_pModule);
             PyErr_Print();
             fprintf(stderr, "Call failed\n");
@@ -72,7 +72,7 @@ int8 MLManager::RunModel(const WAVData& data)
             PyErr_Print();
         fprintf(stderr, "Cannot find function \"%s\"\n", _MLFunctionName[0]);
     }
-    Py_XDECREF(_pFunc);
+    Py_XDECREF(pFunc);
     Py_DECREF(_pModule);
     
     if (Py_FinalizeEx() < 0)

@@ -82,12 +82,12 @@ public:
 
 	PKT_C_AUDIO_DATA_WRITE(uint64 id, BYTE data)
 	{
-		_sendBuffer = GSendBufferManager->Open(5);
+		_sendBuffer = GSendBufferManager->Open(sizeof(PKT_C_AUDIO_DATA));
 		_bw = BufferWriter(_sendBuffer->Buffer(), _sendBuffer->AllocSize());
 
 		_pkt = _bw.Reserve<PKT_C_AUDIO_DATA>();
 		_pkt->packetSize = 0; // To Fill
-		_pkt->packetId = S_DETECTION_RESULT;
+		_pkt->packetId = C_AUDIO_DATA;
 		_pkt->data = data;
 	}
 
