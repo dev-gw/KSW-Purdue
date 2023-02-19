@@ -9,7 +9,8 @@
 │   ├── function_test.py
 │   └── processing_func.py
 ├── save
-│   └── mfcc_3.pkl
+│   ├── mfcc_3.pkl
+│   └── svm_model.pkl
 ├── server
 │   └── server_main.py
 ├── model_training.py
