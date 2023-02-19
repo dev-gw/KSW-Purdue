@@ -32,7 +32,6 @@ librosa 0.9.2
  - h5py 3.8.0
  - werkzeug 2.2.2
  - markdown 3.4.1
-libsvm 3.3.0
 ```   
 
 ## To run this code
