@@ -428,6 +428,7 @@ ipch
 Object Detection/Dataset
 Object Detection/*.pkl
 Object Detection/__pycache__
+Object Detection/server/server_v1.py
 
 ### macOS ###
 # General
