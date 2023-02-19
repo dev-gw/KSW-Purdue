@@ -3,7 +3,7 @@
 Returning classification result
 
 @author: Gwangwon Kim
-version 2.0
+version 2.1
 """
 import os
 import glob
@@ -16,6 +16,8 @@ import sys
 
 import tensorflow as tf
 from sklearn import svm
+import warnings
+warnings.filterwarnings(action='ignore')
 
 
 # Main function
