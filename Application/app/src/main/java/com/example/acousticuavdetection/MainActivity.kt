@@ -2,6 +2,7 @@ package com.example.acousticuavdetection
 
 import android.Manifest
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -65,17 +66,19 @@ class MainActivity : AppCompatActivity() {
 
     fun fabClick(view: View) {
         if (!mIsRecording) {
+            startRecording()
+            mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    startRecording()
-                    mIsRecording = !mIsRecording
+
                 }
             )
         } else {
+            stopRecording()
+            mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    stopRecording()
-                    mIsRecording = !mIsRecording
+
                 }
             )
         }
@@ -83,7 +86,6 @@ class MainActivity : AppCompatActivity() {
 
     fun fab2Click (view: View) {
         Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
-        viewModel.performMfcc()
     }
     private fun checkNeededPermissions() {
         println("Requesting permission")
@@ -112,15 +114,12 @@ class MainActivity : AppCompatActivity() {
     */
 
     private fun startRecording() {
-        val outputFile = "${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio"
-        mRecorder = AudioRecorder()
-        mRecorder?.setOutputFile(outputFile)
+        mRecorder = AudioRecorder(context = this)
         mRecorder?.startRecording()
-        //mRecorder?.splitAudioFile()
         Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, outputFile, Toast.LENGTH_SHORT).show()
     }
     private fun stopRecording() {
+        mRecorder?.stopTimer()
         mRecorder?.stopRecording()
         mRecorder = null
         Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
