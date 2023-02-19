@@ -2,6 +2,7 @@ package com.example.acousticuavdetection
 
 import android.Manifest
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -23,10 +24,7 @@ import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.merlyn.kotlinspeechfeatures.MathUtils
 import org.merlyn.kotlinspeechfeatures.SpeechFeatures
-import java.io.File
-import java.time.LocalTime
 import kotlin.collections.ArrayList
-import kotlin.io.path.Path
 
 
 class MainActivity : AppCompatActivity() {
@@ -68,17 +66,19 @@ class MainActivity : AppCompatActivity() {
 
     fun fabClick(view: View) {
         if (!mIsRecording) {
+            startRecording()
+            mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    startRecording()
-                    mIsRecording = !mIsRecording
+
                 }
             )
         } else {
+            stopRecording()
+            mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    stopRecording()
-                    mIsRecording = !mIsRecording
+
                 }
             )
         }
@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity() {
 
     fun fab2Click (view: View) {
         Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
-        viewModel.performMfcc()
     }
     private fun checkNeededPermissions() {
         println("Requesting permission")
@@ -115,31 +114,12 @@ class MainActivity : AppCompatActivity() {
     */
 
     private fun startRecording() {
-        var fileIndex = 0 //index of file
-        var basePath = "${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio"
-        while(File(basePath + String.format(fileIndex.toString(),"%02d")).exists()) {
-            File(basePath + String.format(fileIndex.toString(),"%02d")).delete()
-            fileIndex++
-        }
-
-        fileIndex = 0
-        var recording = true //creates infinite loop
-        mRecorder = AudioRecorder()
-        mRecorder?.setOutputFile(basePath + String.format(fileIndex.toString(),"%02d"))
+        mRecorder = AudioRecorder(context = this)
         mRecorder?.startRecording()
-        mIsRecording = true
-        do {
-            Thread{
-                fileIndex++
-                Thread.sleep(5000)
-                mRecorder?.setOutputFile(basePath + String.format(fileIndex.toString(),"%02d"))
-            }
-        } while(mIsRecording)
-
         Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, basePath + String.format(fileIndex.toString(),"%02d"), Toast.LENGTH_SHORT).show()
     }
     private fun stopRecording() {
+        mRecorder?.stopTimer()
         mRecorder?.stopRecording()
         mRecorder = null
         Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
