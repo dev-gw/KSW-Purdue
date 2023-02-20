@@ -51,7 +51,7 @@ or
 $ . ~/.bashrc
 
 # Make virtual environment   
-conda create -n uavml python==3.9.13   
+conda create -n uavml python==3.9.5  
 conda activate uavml   
 sudo apt-get install libsndfile1   
 sudo apt-get install make
