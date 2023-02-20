@@ -60,11 +60,12 @@ def concat_data(feature):
     noise_df = convert_data(200, 'noise', 2, feature)
     df = pd.concat([autel_df, dji_df, noise_df])
     df.to_pickle('save/' + feature +  '_3.pkl') # save dataframe to pickle
+    print(feature + ' save complete')
 
 # Modeling
 ## SVM(Support Vector Machine)
-def svm_base(C, kernel):
-    svm_model = svm.SVC(C=C, kernel=kernel)
+def svm_base(C):
+    svm_model = svm.LinearSVC(C=C, loss='squared_hinge')
     return svm_model
 ## libSVM for implementation
 
@@ -122,4 +123,4 @@ def show_history(history):
 
 if __name__ == '__main__':
     # Make dataframe using UAV data
-    concat_data('mfcc')
+    concat_data('tonnetz')
