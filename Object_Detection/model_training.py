@@ -29,6 +29,8 @@ from tensorflow.keras.layers import Input, Dense , Conv2D , Dropout , Flatten , 
 from tensorflow.keras.optimizers import Adam , RMSprop 
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import ReduceLROnPlateau , EarlyStopping , ModelCheckpoint , LearningRateScheduler
+from skl2onnx import convert_sklearn # (v1.13)
+from skl2onnx.common.data_types import FloatTensorType
 
 # Setting(For using GPU)
 physical_devices = tf.config.list_physical_devices('GPU')
@@ -38,14 +40,14 @@ except:
     pass
 
 # Data input - pkl format
-df = pd.read_pickle("save/mfcc_3.pkl")
+df = pd.read_pickle("save/tonnetz_3.pkl")
 # processing
 X = np.array(df.feature.tolist())
 y = np.array(df.class_label.tolist())
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=23)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 ## for Neural network
 y_oh = to_categorical(y) # make 2-dimensions
-x_train, x_test, y_train_nn, y_test_nn = train_test_split(X, y_oh, test_size=0.2, random_state=23)
+x_train, x_test, y_train_nn, y_test_nn = train_test_split(X, y_oh, test_size=0.2, random_state=0)
 time_dict = {} # Measure training time
 
 # NN
@@ -67,10 +69,11 @@ print("----- NN model -----\n", classification_report(y_test, predicted_class))
 # SVM
 ## training
 svm_start_time = time.time()
-svm_model = module.svm_base(C=10, kernel='linear')
+svm_model = module.svm_base(C=10)
 svm_model.fit(x_train, y_train)
 joblib.dump(svm_model, 'save/svm_model.pkl') # save model
 time_dict['SVM'] = time.time() - svm_start_time
+
 ## Model evaluate
 #svm_accuracy = svm_model.score(x_test, y_test)
 print("----- SVM model -----\n", classification_report(y_test, svm_model.predict(x_test)))
@@ -99,8 +102,8 @@ time_dict['GNB'] = time.time() - gnb_start_time
 #gnb_accuracy = gnb_model.score(x_test, y_test)
 print("----- GNB model -----\n", classification_report(y_test, gnb_model.predict(x_test)))
 
-# time
-print(time_dict)
+# inference time
+#print(time_dict)
 
 
 '''

@@ -3,7 +3,7 @@
 Returning classification result
 
 @author: Gwangwon Kim
-version 2.1
+version 2.0
 """
 import os
 import glob
@@ -16,26 +16,30 @@ import sys
 
 import tensorflow as tf
 from sklearn import svm
-import warnings
-warnings.filterwarnings(action='ignore')
 
 
 # Main function
-# data : list of mfcc values.
+# data_path : sound data file path (.wav)
 # model_path : pretrained model file path (.pkl)
-def detect_result(data, model_path):
+def detect_result(data_path, model_path):
     
     # Load model
     svm_model = joblib.load(model_path)
+
+    # Load data
+    signal, sr = librosa.load(data_path)
     
     # Extraction
-    #mfcc = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T, axis=0)
-    X = np.array(data.tolist()).reshape(1,-1)
+    mfcc = librosa.feature.mfcc(signal,sr=sr,n_mfcc=40)
+    #X = np.array(mfcc.tolist()).reshape(1,-1)
 
     # prediction
-    result = svm_model.predict(X)[0]
+    #result = svm_model.predict(X)[0]
     
-    return result
+    return mfcc
+
+result = detect_result('../Dataset/trim_test/audio2.wav', '../save/svm_model.pkl')
+print(result, result.shape)
 
 
 
