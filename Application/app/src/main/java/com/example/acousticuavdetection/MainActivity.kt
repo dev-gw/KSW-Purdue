@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -24,6 +25,7 @@ import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.merlyn.kotlinspeechfeatures.MathUtils
 import org.merlyn.kotlinspeechfeatures.SpeechFeatures
+import java.io.File
 import kotlin.collections.ArrayList
 
 
@@ -62,6 +64,12 @@ class MainActivity : AppCompatActivity() {
                 binding_main.tabLayout.getTabAt(1)?.setText("server")
                 binding_main.tabLayout.getTabAt(0)?.setIcon(R.drawable.baseline_speaker_phone_24)
                 binding_main.tabLayout.getTabAt(1)?.setIcon(R.drawable.baseline_device_hub_24)
+        if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").exists())){
+            File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").mkdir()
+        }
+        if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/audio_feature").exists())){
+            File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/audio_feature").mkdir()
+        }
     }
 
     fun fabClick(view: View) {
@@ -138,6 +146,15 @@ class MainActivity : AppCompatActivity() {
             binding_main.viewPager.removeView(`object` as View)
         }
 
+    }
+    override fun onBackPressed() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+            // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
+            // (https://issuetracker.google.com/issues/139738913)
+            finishAfterTransition()
+        } else {
+            super.onBackPressed()
+        }
     }
 }
 
