@@ -21,6 +21,7 @@
             android:indeterminate="true"
             android:indeterminateDrawable="@drawable/circle_progressbar1"
             android:indeterminateDuration="5000"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,16 +54,14 @@
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
         app:srcCompat="@drawable/baseline_mic_24" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_list"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="300dp"
-        android:clickable="true"
-        android:onClick="fabMenuClick"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+        android:text="0ms"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_more" />
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

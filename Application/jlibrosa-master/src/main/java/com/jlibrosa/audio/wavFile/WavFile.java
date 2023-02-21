@@ -1,5 +1,4 @@
-package com.example.acousticuavdetection.feature;
-
+package com.jlibrosa.audio.wavFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
+/**
+ * This Class load and read the Wav file.
+ * 
+ * Source based on https://github.com/Semantive/waveform-android/blob/master/library/src/main/java/com/semantive/waveformandroid/waveform/soundfile/WavFile.java.
+ * 
+ * @author abhi-rawat1
+ *
+ */
 public class WavFile {
     private enum IOState {READING, WRITING, CLOSED}
 
@@ -18,9 +25,18 @@ public class WavFile {
     private final static int RIFF_TYPE_ID = 0x45564157;
 
     private File file;                        // File that will be read from or written to
-    private IOState ioState;                // Specifies the IO State of the Wav File (used for snaity checking)
+    public long getTotalNumFrames() {
+		return totalNumFrames;
+	}
+
+	public void setTotalNumFrames(long totalNumFrames) {
+		this.totalNumFrames = totalNumFrames;
+	}
+
+	private IOState ioState;                // Specifies the IO State of the Wav File (used for snaity checking)
     private int bytesPerSample;            // Number of bytes required to store a single sample
     private long numFrames;                    // Number of frames within the data section
+    private long totalNumFrames;
     private FileOutputStream oStream;    // Output stream used for writting data
     private FileInputStream iStream;        // Input stream used for reading data
     private float floatScale;                // Scaling factor used for int <-> float conversion
@@ -53,6 +69,10 @@ public class WavFile {
     public long getNumFrames() {
         return numFrames;
     }
+    
+    public void setNumFrames(long nNumFrames) {
+        this.numFrames = nNumFrames;
+    }
 
     public long getFramesRemaining() {
         return numFrames - frameCounter;
@@ -74,6 +94,13 @@ public class WavFile {
         return fileSize;
     }
 
+    /**
+     * To open and read the Wav File.
+     * @param file
+     * @return
+     * @throws IOException
+     * @throws WavFileException
+     */
     public static WavFile openWavFile(File file) throws IOException, WavFileException {
         // Instantiate new Wavfile and store the file reference
         WavFile wavFile = new WavFile();
@@ -174,7 +201,6 @@ public class WavFile {
 
                 // Flag that we've found the wave data chunk
                 foundData = true;
-
                 break;
             } else {
                 // If an unknown chunk ID is found, just skip over the chunk data
@@ -202,10 +228,18 @@ public class WavFile {
         wavFile.bytesRead = 0;
         wavFile.frameCounter = 0;
         wavFile.ioState = IOState.READING;
+        wavFile.totalNumFrames = wavFile.numFrames;
 
         return wavFile;
     }
 
+    /**
+     * To get the LE values.
+     * @param buffer
+     * @param pos
+     * @param numBytes
+     * @return
+     */
     private static long getLE(byte[] buffer, int pos, int numBytes) {
         numBytes--;
         pos += numBytes;
@@ -216,7 +250,13 @@ public class WavFile {
         return val;
     }
 
-    private long readSample() throws IOException, WavFileException {
+    /**
+     * To Read the wav file samples per byte
+     * @return
+     * @throws IOException
+     * @throws WavFileException
+     */
+    private double readSample() throws IOException, WavFileException {
         long val = 0;
 
         for (int b = 0; b < bytesPerSample; b++) {
@@ -234,13 +274,30 @@ public class WavFile {
             bufferPointer++;
         }
 
-        return val;
+        return val/32767.0;
     }
 
+    /**
+     * To Read the wav file frames
+     * @param sampleBuffer
+     * @param numFramesToRead
+     * @return
+     * @throws IOException
+     * @throws WavFileException
+     */
     public int readFrames(float[] sampleBuffer, int numFramesToRead) throws IOException, WavFileException {
         return readFramesInternal(sampleBuffer, 0, numFramesToRead);
     }
 
+    /**
+     * To Read the wav file frames
+     * @param sampleBuffer
+     * @param offset
+     * @param numFramesToRead
+     * @return
+     * @throws IOException
+     * @throws WavFileException
+     */
     private int readFramesInternal(float[] sampleBuffer, int offset, int numFramesToRead) throws IOException, WavFileException {
         if (ioState != IOState.READING) throw new IOException("Cannot read from WavFile instance");
 
@@ -258,27 +315,60 @@ public class WavFile {
         return numFramesToRead;
     }
 
-    public int readFrames(int[] sampleBuffer, int numFramesToRead) throws IOException, WavFileException {
-        return readFramesInternal(sampleBuffer, 0, numFramesToRead);
+    /**
+     * To Read the wav file frames
+     * @param sampleBuffer
+     * @param numFramesToRead
+     * @param frameOffset
+     * @return
+     * @throws IOException
+     * @throws WavFileException
+     */
+    public long readFrames(float[][] sampleBuffer, int numFramesToRead, int frameOffset) throws IOException, WavFileException {
+        return readFramesInternal(sampleBuffer, frameOffset, numFramesToRead);
     }
 
-    private int readFramesInternal(int[] sampleBuffer, int offset, int numFramesToRead) throws IOException, WavFileException {
+    /**
+     * To Read the wav file frames
+     * @param sampleBuffer
+     * @param frameOffset
+     * @param numFramesToRead
+     * @return
+     * @throws IOException
+     * @throws WavFileException
+     */
+    private long readFramesInternal(float[][] sampleBuffer, int frameOffset, int numFramesToRead) throws IOException, WavFileException {
         if (ioState != IOState.READING) throw new IOException("Cannot read from WavFile instance");
-
-        for (int f = 0; f < numFramesToRead; f++) {
-            if (frameCounter == numFrames) return f;
-
+        
+        int readFrameCounter = 0;
+        for (int f = 0; f < totalNumFrames; f++) {
+            if (readFrameCounter == numFramesToRead) return readFrameCounter;
+            
+            //if(frameCounter==totalNumFrames) return readFrameCounter;
+            
             for (int c = 0; c < numChannels; c++) {
-                sampleBuffer[offset] = (int) readSample();
-                offset++;
-            }
+            	float magValue = (float) readSample();
+            	if(f>=frameOffset) {
+            		sampleBuffer[c][readFrameCounter] = magValue;
+            	}
 
-            frameCounter++;
+            }
+            
+            if(f>=frameOffset) {
+            	readFrameCounter++;
+            }
+            
+            
         }
 
-        return numFramesToRead;
+        return readFrameCounter;
     }
 
+    /**
+     * To close the Input Wav File Istream.
+     * 
+     * @throws IOException
+     */
     public void close() throws IOException {
         // Close the input stream and set to null
         if (iStream != null) {
