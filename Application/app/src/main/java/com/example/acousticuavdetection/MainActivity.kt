@@ -1,14 +1,14 @@
 package com.example.acousticuavdetection
 
 import android.Manifest
-import android.content.ContentValues.TAG
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
@@ -17,19 +17,19 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
 import com.example.acousticuavdetection.databinding.ActivityMainBinding
 import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
 import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
-import org.merlyn.kotlinspeechfeatures.MathUtils
-import org.merlyn.kotlinspeechfeatures.SpeechFeatures
 import java.io.File
 import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
+    init{
+        instance = this
+    }
     private lateinit var binding_main: ActivityMainBinding
     private lateinit var binding_phone: FragmentPhoneBinding
     private lateinit var binding_server: FragmentServerBinding
@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mStartButton : Button
     private var mRecorder: AudioRecorder? = null
     private var mIsRecording = false
-    //private val speechFeatures = SpeechFeatures()
     private val viewModel: FeatureExtraction by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,16 +45,21 @@ class MainActivity : AppCompatActivity() {
         checkNeededPermissions()
 
         binding_main = ActivityMainBinding.inflate(layoutInflater)
-        binding_phone = FragmentPhoneBinding.inflate(layoutInflater)
-        binding_server = FragmentServerBinding.inflate(layoutInflater)
         setContentView(binding_main.root)
+        binding_phone = FragmentPhoneBinding.inflate(layoutInflater)
+        setContentView(binding_phone.root)
+        binding_server = FragmentServerBinding.inflate(layoutInflater)
+        val tab1 = binding_main.tabLayout.getTabAt(0)
+        tab1?.setCustomView(R.layout.fragment_phone)
+        val tab1Binding = tab1?.customView?.let {
+            FragmentPhoneBinding.bind(it)
+        }
 
         val actionBar: ActionBar? = supportActionBar
         actionBar?.hide() // Hide Top Application bar with application name
 
         viewList.add(layoutInflater.inflate(R.layout.fragment_phone, null))
         viewList.add(layoutInflater.inflate(R.layout.fragment_server, null))
-
 
         binding_main.viewPager.adapter = pagerAdapter()
 
@@ -67,10 +71,11 @@ class MainActivity : AppCompatActivity() {
         if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").exists())){
             File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").mkdir()
         }
-        if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/audio_feature").exists())){
-            File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/audio_feature").mkdir()
+        if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature").exists())){
+            File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature").mkdir()
         }
     }
+
 
     fun fabClick(view: View) {
         if (!mIsRecording) {
@@ -106,20 +111,6 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO), 0)
         }
     }
-    /*
-    override fun onStart() {
-        super.onStart()
-        binding_phone.fab!!.setOnClickListener(this)
-    }
-    override fun onClick(v: View?){
-        Toast.makeText(this, "Recording Clicked", Toast.LENGTH_SHORT).show()
-        when (v?.id) {
-            R.id.fab -> {
-
-            }
-        }
-    }
-    */
 
     private fun startRecording() {
         mRecorder = AudioRecorder(context = this)
@@ -147,6 +138,28 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+    fun changePhoneToUAV(){
+        runOnUiThread {
+            binding_phone.progressBar1.visibility = GONE
+            binding_phone.progressBar2.visibility = VISIBLE
+            Toast.makeText(this, "changePhoneToUAV", Toast.LENGTH_SHORT).show()
+        }
+    }
+    fun changePhoneToNoise(){
+        runOnUiThread {
+            binding_phone.progressBar1.visibility = VISIBLE
+            binding_phone.progressBar2.visibility = GONE
+            Toast.makeText(this, "changePhoneToNoise", Toast.LENGTH_SHORT).show()
+        }
+    }
+    fun changePhoneInferenceTime(text: Long){
+        runOnUiThread{
+            binding_phone.textView.text = "${text}ms"
+        }
+    }
+    inner class classificationListner() {
+
+    }
     override fun onBackPressed() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
@@ -154,6 +167,13 @@ class MainActivity : AppCompatActivity() {
             finishAfterTransition()
         } else {
             super.onBackPressed()
+        }
+    }
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        lateinit var instance: MainActivity
+        fun ApplicationContext() : Context {
+            return instance.applicationContext
         }
     }
 }

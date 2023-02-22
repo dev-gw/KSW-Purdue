@@ -2,22 +2,12 @@ package com.example.acousticuavdetection
 
 import android.app.Application
 import android.content.Context
-import android.media.MediaRecorder
 import android.os.Environment
-import android.provider.MediaStore.Audio.Media
 import android.util.Log
-import android.widget.Toast
-import androidx.annotation.MainThread
-import androidx.core.os.EnvironmentCompat
 import java.io.File
-import java.io.IOException
-import androidx.core.content.ContextCompat
 import com.example.acousticuavdetection.feature.FeatureExtraction
-import com.github.squti.androidwaverecorder.RecorderState
 import com.github.squti.androidwaverecorder.WaveRecorder
-import kotlinx.coroutines.MainScope
 import java.util.*
-import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timerTask
 
 class AudioRecorder(context: Context) {
@@ -55,13 +45,12 @@ class AudioRecorder(context: Context) {
             )
             waveRecorder.waveConfig.sampleRate = 22050
             waveRecorder.startRecording()
-            waveRecorder.onAmplitudeListener = {
-                Log.i(TAG, "Amplitude : $it")
-            }
+//            waveRecorder.onAmplitudeListener = {
+//                Log.i(TAG, "Amplitude : $it")
+//            }
             divideTimer = Timer()
             divideTimer!!.scheduleAtFixedRate(
                 timerTask {
-                    // SomethingToDo..
                     waveRecorder.stopRecording()
                     mfcc!!.performMfcc(fileIndex)
                     fileIndex++ //increment file name
