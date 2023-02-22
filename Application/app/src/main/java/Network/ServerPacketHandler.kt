@@ -19,7 +19,7 @@ class ServerPacketHandler
     {
         fun HandlePacket(session: Session, pktId: Int, buffer: ByteBuffer)
         {
-            when (pktId as UInt)
+            when (pktId)
             {
                 PacketID.S_DETECTION_RESULT.id -> Handle_S_DETECTION_RESULT(session, buffer);
                 else -> buffer.clear();
@@ -30,8 +30,8 @@ class ServerPacketHandler
         {
             try
             {
-                var serverSession = session as ServerSession;
-                var result = buffer.getInt();
+                val serverSession = session as ServerSession;
+                val result = buffer.getInt();
                 buffer.clear();
                 serverSession.SetDetectionResult(result);
                 return true;

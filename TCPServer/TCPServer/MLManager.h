@@ -10,8 +10,10 @@ public:
 	~MLManager();
 
 	void Init();
-	FeatureData ConvertToWAV(BYTE* data);
-	int8 RunModel(const float* content);
+	int8 RunModel(const float content[], uint16 featureCount);
+
+public:
+	USE_LOCK;
 
 	string _MLFileName = "server.server_main";
 	string _modelPath = "/root/projects/Object_Detection/save/svm_model.pkl";

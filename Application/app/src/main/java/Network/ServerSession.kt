@@ -37,7 +37,7 @@ class ServerSession: PacketSession()
     fun SetDetectionResult(result: Int)
     {
         _result = result;
-        // TODO
+        GetService().GetMainActivity().changeResult(_result);
     }
 
 }

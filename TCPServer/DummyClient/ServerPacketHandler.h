@@ -6,7 +6,7 @@
 using PacketHandlerFunc = std::function<bool(PacketSessionRef&, BYTE*, int32)>;
 extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
-enum PacketNum : unsigned short
+enum PacketNum : uint16
 {
 	C_LOGIN = 1000,
 	S_LOGIN = 1001,
@@ -71,11 +71,11 @@ private:
 
 struct PKT_C_AUDIO_DATA
 {
+
 	uint16 packetSize; // 공용 헤더, 패킷의 유효성 검증을 위한 것
 	uint16 packetId; // 공용 헤더, 받은 패킷이 어떤 종류의 패킷인지 구분하기 위한 것
 	uint16 featureOffset; // feature 배열의 시작 주소
 	uint16 featureCount = 40; // 40개의 데이터를 보낼 것이므로 40
-
 	bool Validate()
 	{
 		uint32 size = 0;
@@ -97,24 +97,31 @@ struct PKT_C_AUDIO_DATA
 class PKT_C_AUDIO_DATA_WRITE
 {
 public:
+	using FeatureList = PacketList<float>();
 	// 서버에 packet id, 사이즈, feature 값들을 보낸다. packetSize는 패킷의 데이터 유효성 검증을 위한 것
 	PKT_C_AUDIO_DATA_WRITE(uint64 id, float* inFeatures)
 	{
-		_sendBuffer = GSendBufferManager->Open(sizeof(PKT_C_AUDIO_DATA));
+		_sendBuffer = GSendBufferManager->Open(256);
 		_bw = BufferWriter(_sendBuffer->Buffer(), _sendBuffer->AllocSize());
 
 		_pkt = _bw.Reserve<PKT_C_AUDIO_DATA>();
 		_pkt->packetSize = 0; // To Fill
 		_pkt->packetId = C_AUDIO_DATA;
+		_pkt->featureCount = 40;
 		float* firstFeature = _bw.Reserve<float>(_pkt->featureCount);
 
 		for (int i = 0; i < _pkt->featureCount; ++i)
-			firstFeature[i] = inFeatures[i];
+			*(firstFeature + i) = inFeatures[i];
 
 		_pkt->featureOffset = (uint64)firstFeature - (uint64)_pkt;
 	}
 
+	/*FeatureList ReserveFeatureList(uint16 featureCount)
+	{
+		float* firstFeature = _bw.Reserve<float>(featureCount);
+		_pkt->featureOffset = (uint64)firstFeature - (uint64)_pkt;
 
+	}*/
 
 	SendBufferRef CloseAndReturn()
 	{
