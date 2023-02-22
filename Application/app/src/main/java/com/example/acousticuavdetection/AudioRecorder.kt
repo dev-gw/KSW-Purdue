@@ -3,10 +3,14 @@ package com.example.acousticuavdetection
 import android.app.Application
 import android.content.Context
 import android.os.Environment
-import android.util.Log
-import java.io.File
+import android.os.Handler
+import android.os.Looper
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import com.github.squti.androidwaverecorder.WaveRecorder
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -26,15 +30,10 @@ class AudioRecorder(context: Context) {
         //var basePath = "${Environment.getExternalStorageDirectory()}/uav_audio/audio" //Base path of audio files
         val basePath = "${mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio/audio"
         //Look for old audio files and delete them
-        while (File(basePath + String.format(fileIndex.toString(), "%02d") + ".wav").exists()) {
-            File(basePath + String.format(fileIndex.toString(), "%02d") + ".wav").delete()
-            fileIndex++
-        }
+        deleteLegacy(basePath, ".wav")
+        deleteLegacy("${mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature/audio_feature", "")
 
-        fileIndex = 0 //reset fileIndex counter to 0
         mIsRecording = true
-
-        mStartTime = System.currentTimeMillis()
         if (mIsRecording as Boolean) {
             //Run on new thread since it'll be in the background
             waveRecorder.changeFilePath(
@@ -45,9 +44,6 @@ class AudioRecorder(context: Context) {
             )
             waveRecorder.waveConfig.sampleRate = 22050
             waveRecorder.startRecording()
-//            waveRecorder.onAmplitudeListener = {
-//                Log.i(TAG, "Amplitude : $it")
-//            }
             divideTimer = Timer()
             divideTimer!!.scheduleAtFixedRate(
                 timerTask {
@@ -61,17 +57,26 @@ class AudioRecorder(context: Context) {
                         ) + ".wav"
                     )
                     waveRecorder.startRecording()
-                }, 5000, 5000)
+                }, 5000, 5100)
         }
     }
 
 
     fun stopRecording() {
-        waveRecorder.stopRecording()
         mIsRecording = false
+        stopTimer()
+        waveRecorder.stopRecording()
     }
     fun stopTimer() {
         divideTimer?.cancel()
+    }
+
+    fun deleteLegacy(filePath: String, fileFormat: String){
+        var fileIndex = 0
+        while (File(filePath + String.format(fileIndex.toString(), "%02d") + "$fileFormat").exists()) {
+            File(filePath + String.format(fileIndex.toString(), "%02d") + "$fileFormat").delete()
+            fileIndex++
+        }
     }
     companion object {
         private const val TAG = "AudioRecorder"

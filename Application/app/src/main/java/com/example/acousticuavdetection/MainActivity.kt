@@ -3,6 +3,7 @@ package com.example.acousticuavdetection
 import Network.*
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,6 +12,7 @@ import android.os.Environment
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -23,12 +25,14 @@ import com.example.acousticuavdetection.databinding.ActivityMainBinding
 import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
 import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
+import org.tensorflow.lite.Interpreter
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 import kotlin.collections.ArrayList
-
-
-
 
 class MainActivity : AppCompatActivity() {
     init{
@@ -42,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var mRecorder: AudioRecorder? = null
     private var mIsRecording = false
     private val viewModel: FeatureExtraction by viewModels()
-
+    private val buttonAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink);
     lateinit var GClientService: ClientService;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         checkNeededPermissions()
 
         binding_main = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding_main.root)
+        //setContentView(binding_main.root)
         binding_phone = FragmentPhoneBinding.inflate(layoutInflater)
         setContentView(binding_phone.root)
         binding_server = FragmentServerBinding.inflate(layoutInflater)
@@ -86,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
         assert(GClientService.Start());
 
-
         // Make another thread for receiving data from the server.
         // Should be modified in future.
         Thread {
@@ -104,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-
+                    binding_phone.fab.startAnimation(buttonAnimation);
                 }
             )
         } else {
@@ -112,12 +115,11 @@ class MainActivity : AppCompatActivity() {
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-
+                    binding_phone.fab.clearAnimation()
                 }
             )
         }
     }
-
     fun fab2Click (view: View) {
         Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
     }
@@ -178,9 +180,6 @@ class MainActivity : AppCompatActivity() {
             binding_phone.textView.text = "${text}ms"
         }
     }
-    inner class classificationListner() {
-
-    }
     override fun onBackPressed() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
@@ -189,6 +188,23 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+    fun getTfliteInterpreter(modelPath: String): Interpreter? {
+        try {
+            return Interpreter(loadModelFile(instance, modelPath)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    @Throws(IOException::class)
+    private fun loadModelFile(activity: Activity, modelPath: String): MappedByteBuffer? {
+        val fileDescriptor = activity.assets.openFd(modelPath)
+        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        val fileChannel: FileChannel = inputStream.getChannel()
+        val startOffset = fileDescriptor.startOffset
+        val declaredLength = fileDescriptor.declaredLength
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
     companion object {
         @SuppressLint("StaticFieldLeak")

@@ -42,7 +42,7 @@ class AudioClassificationHelper(
     var currentModel: String = UAV_MODEL,
 ) {
     private lateinit var binding_phone: FragmentPhoneBinding
-    val tflite: Interpreter? = getTfliteInterpreter("tf_svm_model.tflite")
+    val tflite: Interpreter? = MainActivity.instance.getTfliteInterpreter("tf_svm_model2.tflite")
 
     private val classifyRunnable = Runnable {
         classifyAudio()
@@ -62,37 +62,22 @@ class AudioClassificationHelper(
     }
     private fun classifyAudio() {
         var inferenceTime = SystemClock.uptimeMillis()
-        val outputs = Array(1) { FloatArray(3) }
+        var outputs = Array(1) { FloatArray(3) }
         tflite?.run(mfccFeature, outputs)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
         MainActivity.instance.changePhoneInferenceTime(inferenceTime)
-        if (outputs[0][2] > outputs[0][1] && outputs[0][2] > outputs[0][1]){
+        if (outputs[0][2] > outputs[0][1] && outputs[0][2] > outputs[0][0]){
             MainActivity.instance.changePhoneToNoise()
         }
-        else
+        else {
             MainActivity.instance.changePhoneToUAV()
+        }
         Log.d(TAG, outputs[0][0].toString()) // Autel Evo
         Log.d(TAG, outputs[0][1].toString()) // EJI Phantom 4
         Log.d(TAG, outputs[0][2].toString()) // Noise
         Log.d(TAG, "$inferenceTime")
     }
-    private fun getTfliteInterpreter(modelPath: String): Interpreter? {
-        try {
-            return Interpreter(loadModelFile(MainActivity.instance, modelPath)!!)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-    @Throws(IOException::class)
-    private fun loadModelFile(activity: Activity, modelPath: String): MappedByteBuffer? {
-        val fileDescriptor = activity.assets.openFd(modelPath)
-        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
-        val fileChannel: FileChannel = inputStream.getChannel()
-        val startOffset = fileDescriptor.startOffset
-        val declaredLength = fileDescriptor.declaredLength
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
-    }
+
     companion object {
         private const val TAG = "AudioClassificationHelper"
         const val UAV_MODEL = "tf_svm_model.tflite"
