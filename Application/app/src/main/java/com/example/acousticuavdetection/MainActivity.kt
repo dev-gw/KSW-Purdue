@@ -12,6 +12,7 @@ import android.os.Environment
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -33,9 +34,6 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import kotlin.collections.ArrayList
 
-
-
-
 class MainActivity : AppCompatActivity() {
     init{
         instance = this
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var mRecorder: AudioRecorder? = null
     private var mIsRecording = false
     private val viewModel: FeatureExtraction by viewModels()
-
+    private val buttonAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink);
     lateinit var GClientService: ClientService;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
         assert(GClientService.Start());
 
-
         // Make another thread for receiving data from the server.
         // Should be modified in future.
         Thread {
@@ -110,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-
+                    binding_phone.fab.startAnimation(buttonAnimation);
                 }
             )
         } else {
@@ -118,12 +115,11 @@ class MainActivity : AppCompatActivity() {
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-
+                    binding_phone.fab.clearAnimation()
                 }
             )
         }
     }
-
     fun fab2Click (view: View) {
         Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
     }
@@ -183,9 +179,6 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread{
             binding_phone.textView.text = "${text}ms"
         }
-    }
-    inner class classificationListner() {
-
     }
     override fun onBackPressed() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
