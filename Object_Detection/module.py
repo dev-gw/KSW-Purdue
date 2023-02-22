@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Version 1.2
+Version 1.3
 @author: Gwangwon Kim
 """
 import os
@@ -22,23 +22,28 @@ warnings.filterwarnings(action='ignore')
 
 # Feature Extraction
 def extract_feature(signal, sr, feature):
-    # select feature
-    if feature == 'mfcc':
-        data = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T, axis=0)
-    elif feature == 'mel':
-        data = np.mean(librosa.feature.melspectrogram(signal,sr=sr,n_mels=40).T,axis=0)
-    elif feature == 'chroma':
-        data = np.mean(librosa.feature.chroma_stft(signal, sr).T, axis=0)
-    elif feature == 'contrast':
-           data = np.mean(librosa.feature.spectral_contrast(S=np.abs(librosa.stft(signal)),sr=sr).T,axis=0)
-    elif feature == 'tonnetz':
-        data = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(signal),sr=sr).T,axis=0)
-    else:
+    try:
+        # select feature
+        if feature == 'mfcc':
+            data = np.mean(librosa.feature.mfcc(signal,sr=sr,n_mfcc=40).T, axis=0)
+        elif feature == 'mel':
+            data = np.mean(librosa.feature.melspectrogram(signal,sr=sr,n_mels=40).T,axis=0)
+        elif feature == 'chroma':
+            data = np.mean(librosa.feature.chroma_stft(signal, sr).T, axis=0)
+        elif feature == 'contrast':
+               data = np.mean(librosa.feature.spectral_contrast(S=np.abs(librosa.stft(signal)),sr=sr).T,axis=0)
+        elif feature == 'tonnetz':
+            data = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(signal),sr=sr).T,axis=0)
+        else:
+            print("Wrong input")
+            return None
+        return data
+
+    except Exception as e:
         print("Error when extract feature")
+        print(e)
         return None
-    return data
-
-
+    
 # Convert data to dataframe
 def convert_data(length,company,label, feature):
     features = []     
@@ -53,13 +58,14 @@ def convert_data(length,company,label, feature):
 
 
 # Concat and Save dataframe
+# Execute function
 ## feature : mfcc, mel, chroma, contrast, tonnetz
 def concat_data(feature):
     autel_df = convert_data(100, 'Autel_Evo2', 0, feature)
     dji_df = convert_data(100, 'DJI_Phantom4', 1, feature)
     noise_df = convert_data(200, 'noise', 2, feature)
     df = pd.concat([autel_df, dji_df, noise_df])
-    df.to_pickle('save/' + feature +  '_3.pkl') # save dataframe to pickle
+    df.to_pickle('save/' + feature +  '_scale.pkl') # save dataframe to pickle
     print(feature + ' save complete')
 
 # Modeling
@@ -123,4 +129,4 @@ def show_history(history):
 
 if __name__ == '__main__':
     # Make dataframe using UAV data
-    concat_data('tonnetz')
+    concat_data('mfcc')
