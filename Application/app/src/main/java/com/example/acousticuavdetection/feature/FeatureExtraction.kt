@@ -8,9 +8,12 @@ import java.io.File
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.acousticuavdetection.AudioClassificationHelper
+import com.example.acousticuavdetection.MainActivity
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 import com.jlibrosa.audio.JLibrosa
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 
 class FeatureExtraction(application: Application) : AndroidViewModel(application) {
     private val TAG = "AcousticUAVDetection"
@@ -24,6 +27,15 @@ class FeatureExtraction(application: Application) : AndroidViewModel(application
             val audioFeatureValues = jLibrosa.loadAndRead(filePath + "/uav_audio/audio${String.format(fileIndex.toString(),"%02d")}.wav", 22050, -1)
             val result = jLibrosa.generateMFCCFeatures(audioFeatureValues, 22050, 40, 2048, 128,512)
             val process_result = to2DFloatArray(result)
+
+
+            /* --------------------
+                Send data to Server
+               -------------------- */
+            CoroutineScope(Dispatchers.IO).launch { MainActivity.instance.GClientService.SendAudioData(process_result); }
+
+
+
             val audioHelper = AudioClassificationHelper(context = getApplication(), mfccFeature = process_result)
             outputFile = File("${filePath}/uav_feature/", "audio_feature${String.format(fileIndex.toString(),"%02d")}")
             fileOutputStream = FileOutputStream(outputFile)
