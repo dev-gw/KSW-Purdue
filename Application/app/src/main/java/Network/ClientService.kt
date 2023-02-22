@@ -39,6 +39,7 @@ class ClientService constructor(private val _type: ServiceType, private val _net
                 return false;
         }*/
         _session = CreateSession();
+        _session.SetService(this);
 
         assert(_session.Connect());
 
