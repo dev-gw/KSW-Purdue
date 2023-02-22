@@ -2,6 +2,7 @@ package com.example.acousticuavdetection
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -22,7 +23,12 @@ import com.example.acousticuavdetection.databinding.ActivityMainBinding
 import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
 import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
+import org.tensorflow.lite.Interpreter
 import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 import kotlin.collections.ArrayList
 
 
@@ -45,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         checkNeededPermissions()
 
         binding_main = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding_main.root)
+        //setContentView(binding_main.root)
         binding_phone = FragmentPhoneBinding.inflate(layoutInflater)
         setContentView(binding_phone.root)
         binding_server = FragmentServerBinding.inflate(layoutInflater)
@@ -168,6 +174,23 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+    fun getTfliteInterpreter(modelPath: String): Interpreter? {
+        try {
+            return Interpreter(loadModelFile(instance, modelPath)!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    @Throws(IOException::class)
+    private fun loadModelFile(activity: Activity, modelPath: String): MappedByteBuffer? {
+        val fileDescriptor = activity.assets.openFd(modelPath)
+        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        val fileChannel: FileChannel = inputStream.getChannel()
+        val startOffset = fileDescriptor.startOffset
+        val declaredLength = fileDescriptor.declaredLength
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
     companion object {
         @SuppressLint("StaticFieldLeak")
