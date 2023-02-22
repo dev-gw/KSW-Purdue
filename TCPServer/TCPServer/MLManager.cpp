@@ -29,7 +29,6 @@ void MLManager::Init()
         ASSERT_CRASH(true == false);
     }
     _MLFunctionName.push_back("detect_result");
-	ASSERT_CRASH(_pFunc && PyCallable_Check(_pFunc))
 }
 
 FeatureData MLManager::ConvertToWAV(BYTE* data)
