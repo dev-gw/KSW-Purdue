@@ -31,16 +31,12 @@ void MLManager::Init()
     _MLFunctionName.push_back("detect_result");
 }
 
-FeatureData MLManager::ConvertToWAV(BYTE* data)
-{
 
-}
-
-int8 MLManager::RunModel(const float* data)
+int8 MLManager::RunModel(const float data[], uint16 featureCount)
 {
+	WRITE_LOCK;
     PyObject* pArgs, * pValue, * pData, * pModelPath;
-	uint8 dataLen = sizeof(data) / sizeof(float); // Should be 40
-	ASSERT_CRASH(dataLen == 40);
+
 
     ASSERT_CRASH(_pModule != NULL)
     _pFunc = PyObject_GetAttrString(_pModule, _MLFunctionName[0].c_str());
@@ -49,9 +45,9 @@ int8 MLManager::RunModel(const float* data)
 	{
 		pArgs = PyTuple_New(2);
 		//pData = PyTuple_New(dataLen);
-		pData = PyTuple_New(dataLen);
+		pData = PyTuple_New(featureCount);
 		// Set arguments put to python Func
-		for (int elementNum = 0; elementNum < dataLen; ++elementNum)
+		for (int elementNum = 0; elementNum < featureCount; ++elementNum)
 		{
 			pValue = PyFloat_FromDouble(data[elementNum]);
 			if (!pValue)
