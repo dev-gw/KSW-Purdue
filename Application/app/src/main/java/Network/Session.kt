@@ -128,7 +128,6 @@ open class Session
         }
 
         var writeResult = _socketChannel.write(sendBuffer);
-        writeResult.get();
     }
 
     fun ProcessRecv(buffer: ByteBuffer)
