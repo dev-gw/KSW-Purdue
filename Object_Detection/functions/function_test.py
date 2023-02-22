@@ -25,10 +25,12 @@ from sklearn.svm import SVC
 ## Verify shape of features
 
 #df.index.name = 'Features'
+model = keras.models.load_model('../save/tf_svm_model.h5', compile=True)
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+flat_data = converter.convert()
 
-
-
-
+with open('../save/tf_svm_model_2.tflite', 'wb') as f:
+    f.write(flat_data)
 
 
 # Data convert test
