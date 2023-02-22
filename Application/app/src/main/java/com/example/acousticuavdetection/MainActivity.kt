@@ -1,5 +1,6 @@
 package com.example.acousticuavdetection
 
+import Network.*
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -24,12 +25,15 @@ import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
 import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.tensorflow.lite.Interpreter
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import kotlin.collections.ArrayList
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,6 +48,8 @@ class MainActivity : AppCompatActivity() {
     private var mRecorder: AudioRecorder? = null
     private var mIsRecording = false
     private val viewModel: FeatureExtraction by viewModels()
+
+    lateinit var GClientService: ClientService;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +85,21 @@ class MainActivity : AppCompatActivity() {
         }
         if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature").exists())){
             File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature").mkdir()
+        }
+
+        // Instantiate Service object. Service objects create and manage session.
+        // Communication with server can be done through service objects.
+        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
+        assert(GClientService.Start());
+
+
+        // Make another thread for receiving data from the server.
+        // Should be modified in future.
+        Thread {
+            while (true)
+            {
+                GClientService.RecvData();
+            };
         }
     }
 
@@ -197,6 +218,16 @@ class MainActivity : AppCompatActivity() {
         lateinit var instance: MainActivity
         fun ApplicationContext() : Context {
             return instance.applicationContext
+        }
+    }
+
+    fun changeResult(result: Int)
+    {
+        when (result as UInt)
+        {
+            DetectionResult.Noise.id -> {
+                binding_phone.progressBar2.visibility = GONE; binding_phone.progressBar1.visibility = VISIBLE; }
+            else -> { binding_phone.progressBar1.visibility = GONE; binding_phone.progressBar2.visibility = VISIBLE; }
         }
     }
 }
