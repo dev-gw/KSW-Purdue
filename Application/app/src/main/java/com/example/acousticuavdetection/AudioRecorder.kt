@@ -57,7 +57,7 @@ class AudioRecorder(context: Context) {
                         ) + ".wav"
                     )
                     waveRecorder.startRecording()
-                }, 5000, 5100)
+                }, 5000, 5200)
         }
     }
 

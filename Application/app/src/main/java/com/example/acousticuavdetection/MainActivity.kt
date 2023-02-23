@@ -22,16 +22,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.PagerAdapter
 import com.example.acousticuavdetection.databinding.ActivityMainBinding
-import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
-import com.example.acousticuavdetection.databinding.FragmentServerBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.tensorflow.lite.Interpreter
-import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import java.util.Timer
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -39,45 +37,28 @@ class MainActivity : AppCompatActivity() {
         instance = this
     }
     private lateinit var binding_main: ActivityMainBinding
-    private lateinit var binding_phone: FragmentPhoneBinding
-    private lateinit var binding_server: FragmentServerBinding
     var viewList = ArrayList<View>()
     private lateinit var mStartButton : Button
     private var mRecorder: AudioRecorder? = null
     private var mIsRecording = false
     private val viewModel: FeatureExtraction by viewModels()
-    private val buttonAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink);
+    private var timer = Timer()
+    private var startTime: Long? = null
+    private var endTime: Long? = null
     lateinit var GClientService: ClientService;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        checkNeededPermissions()
+        val checkPermission = CheckPermission()
+        checkPermission.checkNeededPermissions()
 
         binding_main = ActivityMainBinding.inflate(layoutInflater)
-        //setContentView(binding_main.root)
-        binding_phone = FragmentPhoneBinding.inflate(layoutInflater)
-        setContentView(binding_phone.root)
-        binding_server = FragmentServerBinding.inflate(layoutInflater)
-        val tab1 = binding_main.tabLayout.getTabAt(0)
-        tab1?.setCustomView(R.layout.fragment_phone)
-        val tab1Binding = tab1?.customView?.let {
-            FragmentPhoneBinding.bind(it)
-        }
+        setContentView(binding_main.root)
 
         val actionBar: ActionBar? = supportActionBar
         actionBar?.hide() // Hide Top Application bar with application name
 
-        viewList.add(layoutInflater.inflate(R.layout.fragment_phone, null))
-        viewList.add(layoutInflater.inflate(R.layout.fragment_server, null))
-
-        binding_main.viewPager.adapter = pagerAdapter()
-
-        binding_main.tabLayout.setupWithViewPager(binding_main.viewPager) // tab과 viewPager 연결
-                binding_main.tabLayout.getTabAt(0)?.setText("phone")
-                binding_main.tabLayout.getTabAt(1)?.setText("server")
-                binding_main.tabLayout.getTabAt(0)?.setIcon(R.drawable.baseline_speaker_phone_24)
-                binding_main.tabLayout.getTabAt(1)?.setIcon(R.drawable.baseline_device_hub_24)
         if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").exists())){
             File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").mkdir()
         }
@@ -103,11 +84,12 @@ class MainActivity : AppCompatActivity() {
 
     fun fabClick(view: View) {
         if (!mIsRecording) {
+            val buttonAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink);
             startRecording()
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    binding_phone.fab.startAnimation(buttonAnimation);
+                    binding_main.fab.startAnimation(buttonAnimation);
                 }
             )
         } else {
@@ -115,7 +97,8 @@ class MainActivity : AppCompatActivity() {
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    binding_phone.fab.clearAnimation()
+                    changePhoneToNoise()
+                    binding_main.fab.clearAnimation()
                 }
             )
         }
@@ -123,17 +106,7 @@ class MainActivity : AppCompatActivity() {
     fun fab2Click (view: View) {
         Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
     }
-    private fun checkNeededPermissions() {
-        println("Requesting permission")
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            != PackageManager.PERMISSION_GRANTED) {
-            println("Requesting permission")
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO), 0)
-        }
-    }
+
 
     private fun startRecording() {
         mRecorder = AudioRecorder(context = this)
@@ -146,38 +119,41 @@ class MainActivity : AppCompatActivity() {
         mRecorder = null
         Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
     }
-    inner class pagerAdapter() : PagerAdapter() {
-        override fun isViewFromObject(view: View, `object`: Any) = view == `object` // 뷰랑 오브젝트가 같냐
-
-        override fun getCount() = viewList.size
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            var curView = viewList[position]
-            binding_main.viewPager.addView(curView)
-            return curView
-        }
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            binding_main.viewPager.removeView(`object` as View)
-        }
-
-    }
     fun changePhoneToUAV(){
         runOnUiThread {
-            binding_phone.progressBar1.visibility = GONE
-            binding_phone.progressBar2.visibility = VISIBLE
+            binding_main.progressBar1.visibility = GONE
+            binding_main.progressBar2.visibility = VISIBLE
             Toast.makeText(this, "changePhoneToUAV", Toast.LENGTH_SHORT).show()
         }
     }
     fun changePhoneToNoise(){
         runOnUiThread {
-            binding_phone.progressBar1.visibility = VISIBLE
-            binding_phone.progressBar2.visibility = GONE
+            binding_main.progressBar1.visibility = VISIBLE
+            binding_main.progressBar2.visibility = GONE
             Toast.makeText(this, "changePhoneToNoise", Toast.LENGTH_SHORT).show()
         }
     }
     fun changePhoneInferenceTime(text: Long){
         runOnUiThread{
-            binding_phone.textView.text = "${text}ms"
+            binding_main.textView.text = "${text}ms"
+        }
+    }
+    fun checkPhoneSwitch(): Boolean {
+        return binding_main.switch1.isChecked
+    }
+
+    fun networkInferenceTimerStart() {
+        startTime = System.currentTimeMillis()
+    }
+    fun networkInferenceTimerEnd() {
+        endTime = System.currentTimeMillis() - startTime!!
+        changePhoneInferenceTime(endTime!!)
+        startTime = 0
+        endTime = 0
+    }
+    fun changePhoneResultText(result: String) {
+        runOnUiThread {
+            binding_main.textView2.text = result
         }
     }
     override fun onBackPressed() {
@@ -216,11 +192,12 @@ class MainActivity : AppCompatActivity() {
 
     fun changeResult(result: Int)
     {
+        networkInferenceTimerEnd()
         when (result as UInt)
         {
             DetectionResult.Noise.id -> {
-                binding_phone.progressBar2.visibility = GONE; binding_phone.progressBar1.visibility = VISIBLE; }
-            else -> { binding_phone.progressBar1.visibility = GONE; binding_phone.progressBar2.visibility = VISIBLE; }
+                binding_main.progressBar2.visibility = GONE; binding_main.progressBar1.visibility = VISIBLE; }
+            else -> { binding_main.progressBar1.visibility = GONE; binding_main.progressBar2.visibility = VISIBLE; }
         }
     }
 }

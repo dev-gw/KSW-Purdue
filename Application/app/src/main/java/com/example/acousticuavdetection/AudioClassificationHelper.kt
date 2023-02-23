@@ -22,7 +22,6 @@ import android.content.Context
 import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
-import com.example.acousticuavdetection.databinding.FragmentPhoneBinding
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -41,7 +40,6 @@ class AudioClassificationHelper(
     var mfccFeature: FloatArray,
     var currentModel: String = UAV_MODEL,
 ) {
-    private lateinit var binding_phone: FragmentPhoneBinding
     val tflite: Interpreter? = MainActivity.instance.getTfliteInterpreter("tf_svm_model2.tflite")
 
     private val classifyRunnable = Runnable {
@@ -72,6 +70,7 @@ class AudioClassificationHelper(
         else {
             MainActivity.instance.changePhoneToUAV()
         }
+        MainActivity.instance.changePhoneResultText(outputs[0][0].toString() + "$\n" + outputs[0][1].toString() + "$\n" + outputs[0][2].toString() )
         Log.d(TAG, outputs[0][0].toString()) // Autel Evo
         Log.d(TAG, outputs[0][1].toString()) // EJI Phantom 4
         Log.d(TAG, outputs[0][2].toString()) // Noise
