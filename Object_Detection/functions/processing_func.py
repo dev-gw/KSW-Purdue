@@ -115,7 +115,7 @@ def visualize_only_mfcc(title, path):
     librosa.display.specshow(mfcc, x_axis='time')
     plt.colorbar()
 
-def visualize_only_wavefoam(title, path):
+def visualize_only_waveform(title, path):
     y, sr = librosa.load(path, sr=22050)
     plt.rc('font', size=30)
     plt.rc('axes', labelsize=30)
@@ -140,7 +140,7 @@ def visualize_only_chroma(title, path):
         
     
 if __name__ == '__main__':
-    convert_func()
+    visualize_only_waveform('Waveform','../Dataset/noise/5.wav' )
     
     
 
