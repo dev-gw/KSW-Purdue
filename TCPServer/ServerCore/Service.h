@@ -14,6 +14,10 @@ enum class ServiceType : uint8
 	Service
 --------------*/
 
+// Epoll core can be added into service for multiple listener.
+// Each listener will be put into epoll and thread can take care of their own epoll.
+// This can be implemented by each thread's Id.
+
 using SessionFactory = function<SessionRef(void)>;
 
 class Service : public enable_shared_from_this<Service>
@@ -38,7 +42,7 @@ public:
 public:
 	ServiceType			GetServiceType() { return _type; }
 	NetAddress			GetNetAddress() { return _netAddress; }
-	EpollCoreRef& GetEpollCore() { return _epollCore; }
+	EpollCoreRef&		GetEpollCore() { return _epollCore; }
 
 protected:
 	USE_LOCK;

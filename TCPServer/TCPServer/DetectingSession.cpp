@@ -21,11 +21,12 @@ void DetectingSession::OnRecvPacket(BYTE* buffer, int32 len)
 	PacketSessionRef session = GetPacketSessionRef();
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
-	cout << "OnRecvPacket()" << endl;
-	// TODO : packetId 대역 체크
+	cout << "DetectingSession::OnRecvPacket()" << endl;
+	
 	ClientPacketHandler::HandlePacket(session, buffer, len);
 }
 
 void DetectingSession::OnSend(int32 len)
 {
+	cout << "DetectingSession::OnRecvPacket(), To " << GetAddress().GetIpAddress() << endl;
 }

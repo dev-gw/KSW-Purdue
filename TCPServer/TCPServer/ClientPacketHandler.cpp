@@ -12,7 +12,7 @@ MLManager GMLManager;
 struct PKT_C_AUDIO_DATA
 {
 	uint16 packetSize; // Common header, to validate availability packets
-	uint16 packetId; // Common geader, to decide the kind of packets 받은 패킷이 어떤 종류의 패킷인지 구분하기 위한 것
+	uint16 packetId; // Common header, to decide the kind of packets
 	uint16 featureOffset; // Address of feature data
 	uint16 featureCount = 40;
 
@@ -70,7 +70,6 @@ bool ClientPacketHandler::Handle_C_LOGIN(PacketSessionRef& session, BYTE* buffer
 
 bool ClientPacketHandler::Handle_C_AUDIO_DATA(PacketSessionRef & session, BYTE * buffer, int32 len)
 {
-	
 	// TODO
 	BufferReader br(buffer, len);
 
@@ -81,9 +80,21 @@ bool ClientPacketHandler::Handle_C_AUDIO_DATA(PacketSessionRef & session, BYTE *
 
 	float* features = pkt->GetFeatures();
 	
+	clock_t start, end;
+	double inferenceTime;
+	start = clock();
 	int8 result = GMLManager.RunModel(features, pkt->featureCount);
+	end = clock();
+	inferenceTime = (double)(end - start);
 
-	cout << "Handle_C_Audio, Result: " << result << endl;
+	cout << "Handle_C_Audio, Result: " << result << ", Inference time: " << inferenceTime << "ms" << endl;
+
+	DetectingSessionRef detectionSession = static_pointer_cast<DetectingSession>(session);
+
+	PKT_S_DETECTION_RESULT_WRITE pktWriter(S_DETECTION_RESULT, result);
+	SendBufferRef sendBuffer = pktWriter.CloseAndReturn();
+	detectionSession->Send(sendBuffer);
+
 	return true;
 }
 

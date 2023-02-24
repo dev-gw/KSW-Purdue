@@ -72,10 +72,10 @@ private:
 struct PKT_C_AUDIO_DATA
 {
 
-	uint16 packetSize; // 공용 헤더, 패킷의 유효성 검증을 위한 것
-	uint16 packetId; // 공용 헤더, 받은 패킷이 어떤 종류의 패킷인지 구분하기 위한 것
-	uint16 featureOffset; // feature 배열의 시작 주소
-	uint16 featureCount = 40; // 40개의 데이터를 보낼 것이므로 40
+	uint16 packetSize; // Common header, to validate availability of packets
+	uint16 packetId; // Common header, to decide the kind of packets
+	uint16 featureOffset; // Address of feature data
+	uint16 featureCount = 40;
 	bool Validate()
 	{
 		uint32 size = 0;
