@@ -45,6 +45,11 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
 
 	ASSERT_CRASH(_pModule != NULL);
 
+	if (Py_IsInitialized() == false)
+	{
+		Py_Initialize();
+	}
+
     /* pFunc is a new reference */
 	if (_pFunc && PyCallable_Check(_pFunc)) // python func can be called
 	{
@@ -83,6 +88,15 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
 			int8 result = PyLong_AsLong(pValue);
 			printf("Result of call: %d\n", result);
 			Py_DECREF(pValue);
+			Py_XDECREF(_pFunc);
+			Py_DECREF(_pModule);
+			Py_DECREF(_pModelPath);
+
+			if (Py_FinalizeEx() < 0)
+			{
+				printf("Py_FinalizeEx() < 0 \n");
+				ASSERT_CRASH(true == false);
+			}
 			return result;
 		}
 		else
