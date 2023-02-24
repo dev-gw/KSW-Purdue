@@ -10,16 +10,16 @@ public:
 	~MLManager();
 
 	void Init();
-	int8 RunModel(const float content[], uint16 featureCount);
+	int8 RunModel(const float features[], uint16 featureCount);
 
 public:
 	USE_LOCK;
 
 	string _MLFileName = "server.server_main";
-	string _modelPath = "/root/projects/Object_Detection/save/svm_model.pkl";
+	string _modelPath = "/usr/projects/Object_Detection/save/svm_model.pkl";
 	uint8 _numOfCall = 1;
 	vector<string> _MLFunctionName;
 
-	PyObject* _pName, * _pModule, * _pFunc;
+	PyObject* _pName, * _pModule, * _pFunc, * _pModelPath;
 };
 

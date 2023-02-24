@@ -54,14 +54,14 @@ int main()
 	//this_thread::sleep_for(chrono::seconds(1));
 
 	ClientServiceRef service = MakeShared<ClientService>(
-		NetAddress("192.168.227.141", 632),
+		NetAddress("192.168.122.1", 632),
 		MakeShared<EpollCore>(),
 		MakeShared<ServerSession>, // TODO : SessionManager µî
 		1);
 
 	ASSERT_CRASH(service->Start());
 
-	/*for (int32 i = 0; i < 1; i++)
+	for (int32 i = 0; i < 1; i++)
 	{
 		GThreadManager->Launch([=]()
 			{
@@ -70,7 +70,7 @@ int main()
 					service->GetEpollCore()->Dispatch();
 				}
 			});
-	}*/
+	}
 
 	PKT_C_AUDIO_DATA_WRITE pktWriter(C_AUDIO_DATA, data);
 

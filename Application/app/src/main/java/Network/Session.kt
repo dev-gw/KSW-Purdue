@@ -38,8 +38,11 @@ open class Session
         try
         {
             _socketChannel = AsynchronousSocketChannel.open();
-            _socketChannel.connect(GetService().GetNetAddress().GetSockAddr());
+            var result = _socketChannel.connect(netAddress.GetSockAddr());
+            println("Before Get()");
+            result.get();
 
+            println("Connected to "+ netAddress.GetIPAddress());
             _recvBuffer = ByteBuffer.allocate(BufferSize.KB_64.size);
 
             return true;

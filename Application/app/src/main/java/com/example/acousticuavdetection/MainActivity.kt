@@ -24,6 +24,12 @@ import androidx.viewpager.widget.PagerAdapter
 import com.example.acousticuavdetection.databinding.ActivityMainBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.tensorflow.lite.Interpreter
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -31,6 +37,7 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.Timer
 import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     init{
@@ -68,12 +75,17 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate Service object. Service objects create and manage session.
         // Communication with server can be done through service objects.
-        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
-        assert(GClientService.Start());
+        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.122.1", 632), ServerSession(),1, this);
+
+
 
         // Make another thread for receiving data from the server.
         // Should be modified in future.
-        Thread {
+        thread(start = true)
+        {
+            println("Network thread started");
+            assert(GClientService.Start());
+            println("Client Service started");
             while (true)
             {
                 GClientService.RecvData();

@@ -92,6 +92,8 @@ bool ServerService::Start()
 		return false;
 	cout << "CanStart" << endl;
 
+	
+
 	_listener = MakeShared<Listener>();
 	if (_listener == nullptr)
 		return false;

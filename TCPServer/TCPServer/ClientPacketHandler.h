@@ -7,7 +7,7 @@ using PacketHandlerFunc = std::function<bool(PacketSessionRef&, BYTE*, int32)>;
 extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
 
-enum PacketNum : unsigned short
+enum PacketNum : uint16
 {
 	C_LOGIN = 1000,
 	S_LOGIN = 1001,
@@ -30,9 +30,9 @@ public:
 // [ PKT_S_DETECTION_RESULT ][result]
 struct PKT_S_DETECTION_RESULT
 {
-	uint16 packetSize; // 공용 헤더
-	uint16 packetId; // 공용 헤더
-	bool result;
+	uint16 packetSize; // Common header
+	uint16 packetId; // Common header
+	uint8 result;
 };
 
 // [ PKT_S_DETECTION_RESULT ][result]
@@ -40,9 +40,9 @@ class PKT_S_DETECTION_RESULT_WRITE
 {
 public:
 
-	PKT_S_DETECTION_RESULT_WRITE(uint64 id, bool result)
+	PKT_S_DETECTION_RESULT_WRITE(uint64 id, uint8 result)
 	{
-		_sendBuffer = GSendBufferManager->Open(5);
+		_sendBuffer = GSendBufferManager->Open(32);
 		_bw = BufferWriter(_sendBuffer->Buffer(), _sendBuffer->AllocSize());
 
 		_pkt = _bw.Reserve<PKT_S_DETECTION_RESULT>();
@@ -53,7 +53,7 @@ public:
 
 	SendBufferRef CloseAndReturn()
 	{
-		// 패킷 사이즈 계산
+		// Calculate the size of the packet
 		_pkt->packetSize = _bw.WriteSize();
 
 		_sendBuffer->Close(_bw.WriteSize());
