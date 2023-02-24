@@ -25,6 +25,8 @@ public:
 
 	static bool Handle_S_LOGIN(PacketSessionRef& session, BYTE* buffer, int32 len);
 	static bool Handle_S_DETECTION_RESULT(PacketSessionRef& session, BYTE* buffer, int32 len);
+
+	static Tick64_t _startTime;
 };
 
 template<typename T, typename C>

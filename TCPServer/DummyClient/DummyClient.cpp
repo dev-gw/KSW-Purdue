@@ -78,8 +78,9 @@ int main()
 
 	SendBufferRef sendBuffer = pktWriter.CloseAndReturn();
 
-	while (true)
+	for (int num = 0; num < 10; ++num)
 	{
+		ServerPacketHandler::_startTime = GetTickCount_64();
 		service->Broadcast(sendBuffer);
 		this_thread::sleep_for(chrono::seconds(10));
 	}

@@ -82,9 +82,9 @@ bool ClientPacketHandler::Handle_C_AUDIO_DATA(PacketSessionRef & session, BYTE *
 	
 	clock_t start, end;
 	double inferenceTime;
-	start = clock();
+	start = GetTickCount_64();
 	int8 result = GMLManager.RunModel(features, pkt->featureCount);
-	end = clock();
+	end = GetTickCount_64();
 	inferenceTime = (double)(end - start);
 
 	cout << "Handle_C_Audio, Result: " << result << ", Inference time: " << inferenceTime << "ms" << endl;
