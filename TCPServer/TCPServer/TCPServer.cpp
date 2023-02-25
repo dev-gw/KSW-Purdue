@@ -75,7 +75,7 @@ int main()
 
 
 	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress("20.49.6.199", 632),
+		NetAddress("172.31.56.226", 7367),
 		MakeShared<EpollCore>(),
 		MakeShared<DetectingSession>,
 		10);

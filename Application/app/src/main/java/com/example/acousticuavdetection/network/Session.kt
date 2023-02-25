@@ -1,5 +1,6 @@
 package com.example.acousticuavdetection.network
 
+import kotlinx.coroutines.Dispatchers
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
 import java.util.*
@@ -32,8 +33,10 @@ open class Session
         var netAddress: NetAddress = GetService().GetNetAddress();
         try
         {
+
             _socketChannel = AsynchronousSocketChannel.open();
-            _socketChannel.connect(GetService().GetNetAddress().GetSockAddr());
+            var result = _socketChannel.connect(GetService().GetNetAddress().GetSockAddr());
+            result.get();
 
             _recvBuffer = ByteBuffer.allocate(BufferSize.KB_64.size);
 

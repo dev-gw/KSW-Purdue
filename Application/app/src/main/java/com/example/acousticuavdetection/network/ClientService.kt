@@ -1,6 +1,9 @@
 package com.example.acousticuavdetection.network
 
 import com.example.acousticuavdetection.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 
 
@@ -41,7 +44,11 @@ class ClientService constructor(private val _type: ServiceType, private val _net
 
         var byteBuffer: ByteBuffer = pkt.Write(); // Convert contents of the packet to byte array
         byteBuffer.flip();
-        _session.GetSocketChannel().write(byteBuffer); // Send through socket channel
+        CoroutineScope(Dispatchers.IO).launch()
+        {
+            _session.GetSocketChannel().write(byteBuffer); // Send through socket channel
+        }
+
 
     }
 
