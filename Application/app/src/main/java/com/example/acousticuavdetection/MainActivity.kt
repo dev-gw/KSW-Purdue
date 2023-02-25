@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         
 
         // Make another thread for receiving data from the server.
-        thread(start==true) {
+        thread(start=true) {
         assert(GClientService.Start());
             while (true)
             {
