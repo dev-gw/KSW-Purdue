@@ -25,8 +25,6 @@ public:
 
 	static bool Handle_S_LOGIN(PacketSessionRef& session, BYTE* buffer, int32 len);
 	static bool Handle_S_DETECTION_RESULT(PacketSessionRef& session, BYTE* buffer, int32 len);
-
-	static Tick64_t _startTime;
 };
 
 template<typename T, typename C>
@@ -74,10 +72,10 @@ private:
 struct PKT_C_AUDIO_DATA
 {
 
-	uint16 packetSize; // Common header, to validate availability of packets
-	uint16 packetId; // Common header, to decide the kind of packets
-	uint16 featureOffset; // Address of feature data
-	uint16 featureCount = 40;
+	uint16 packetSize; // 공용 헤더, 패킷의 유효성 검증을 위한 것
+	uint16 packetId; // 공용 헤더, 받은 패킷이 어떤 종류의 패킷인지 구분하기 위한 것
+	uint16 featureOffset; // feature 배열의 시작 주소
+	uint16 featureCount = 40; // 40개의 데이터를 보낼 것이므로 40
 	bool Validate()
 	{
 		uint32 size = 0;
@@ -100,7 +98,7 @@ class PKT_C_AUDIO_DATA_WRITE
 {
 public:
 	using FeatureList = PacketList<float>();
-	// Send packet id, size, feature data to the Server. PacketSize is for validating packets
+	// 서버에 packet id, 사이즈, feature 값들을 보낸다. packetSize는 패킷의 데이터 유효성 검증을 위한 것
 	PKT_C_AUDIO_DATA_WRITE(uint64 id, float* inFeatures)
 	{
 		_sendBuffer = GSendBufferManager->Open(256);

@@ -24,14 +24,14 @@ void DoWorkerJob(ServerServiceRef& service)
 	{
 		LEndTickCount = ::GetTickCount_64() + WORKER_TICK;
 
-		// Processing network IO -> PacketHandler do what is needed to when packets arrive
+		// 네트워크 입출력 처리 -> 인게임 로직까지 (패킷 핸들러에 의해)
 		service->GetEpollCore()->Dispatch(10);
 
-		
-		// ThreadManager::DistributeReservedJobs();
+		// 예약된 일감 처리
+		ThreadManager::DistributeReservedJobs();
 
-
-		// ThreadManager::DoGlobalQueueWork();
+		// 글로벌 큐
+		ThreadManager::DoGlobalQueueWork();
 	}
 }
 
@@ -75,20 +75,20 @@ int main()
 
 
 	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress("20.49.6.199", 632),
+		NetAddress("192.168.227.141", 632),
 		MakeShared<EpollCore>(),
 		MakeShared<DetectingSession>,
 		10);
 
 	ASSERT_CRASH(service->Start());
 
-	/*for (int32 i = 0; i < 5; i++)
+	for (int32 i = 0; i < 5; i++)
 	{
 		GThreadManager->Launch([&service]()
 			{
 				DoWorkerJob(service);
 			});
-	}*/
+	}
 
 	// Main Thread
 	DoWorkerJob(service);
