@@ -9,14 +9,7 @@ MLManager::MLManager()
 
 MLManager::~MLManager()
 {
-	Py_XDECREF(_pFunc);
-	Py_DECREF(_pModule);
-
-	if (Py_FinalizeEx() < 0)
-	{
-		printf("Py_FinalizeEx() < 0 \n");
-		ASSERT_CRASH(true == false);
-	}
+    
 }
 
 void MLManager::Init()
@@ -36,44 +29,31 @@ void MLManager::Init()
         ASSERT_CRASH(true == false);
     }
     _MLFunctionName.push_back("detect_result");
-
-	_pFunc = PyObject_GetAttrString(_pModule, _MLFunctionName[0].c_str());
-
-	
-	ASSERT_CRASH(_pFunc);
 }
 
 
 int8 MLManager::RunModel(const float data[], uint16 featureCount)
 {
 	WRITE_LOCK;
-	PyObject* pArgs, * pValue, * pData, * pModelPath;
+    PyObject* pArgs, * pValue, * pData, * pModelPath;
 
 
-	ASSERT_CRASH(_pModule != NULL);
-
-	if (Py_IsInitialized() == false)
-	{
-		Py_Initialize();
-	}
-
+    ASSERT_CRASH(_pModule != NULL)
+    _pFunc = PyObject_GetAttrString(_pModule, _MLFunctionName[0].c_str());
     /* pFunc is a new reference */
 	if (_pFunc && PyCallable_Check(_pFunc)) // python func can be called
 	{
-		pModelPath = PyUnicode_DecodeFSDefault(_modelPath.c_str());
-
 		pArgs = PyTuple_New(2);
 		//pData = PyTuple_New(dataLen);
 		pData = PyTuple_New(featureCount);
 		// Set arguments put to python Func
 		for (int elementNum = 0; elementNum < featureCount; ++elementNum)
 		{
-			//float newData = data[elementNum];
 			pValue = PyFloat_FromDouble(data[elementNum]);
 			if (!pValue)
 			{
 				Py_DECREF(pData);
-				// Py_DECREF(_pModule);
+				Py_DECREF(_pModule);
 				fprintf(stderr, "Cannot convert argument\n");
 				return 1;
 			}
@@ -81,7 +61,7 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
 			if (PyTuple_SetItem(pData, elementNum, pValue) == -1)
 			{
 				Py_DECREF(pData);
-				// Py_DECREF(_pModule);
+				Py_DECREF(_pModule);
 				fprintf(stderr, "Cannot append argument\n");
 				return 1;
 			}
@@ -97,15 +77,6 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
 			int8 result = PyLong_AsLong(pValue);
 			printf("Result of call: %d\n", result);
 			Py_DECREF(pValue);
-			// Py_XDECREF(_pFunc);
-			// Py_DECREF(_pModule);
-			// Py_DECREF(_pModelPath);
-
-			/*if (Py_FinalizeEx() < 0)
-			{
-				printf("Py_FinalizeEx() < 0 \n");
-				ASSERT_CRASH(true == false);
-			}*/
 			return result;
 		}
 		else
@@ -124,5 +95,12 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
 		fprintf(stderr, "Cannot find function \"%s\"\n", _MLFunctionName[0].c_str());
 		ASSERT_CRASH(true == false);
 	}
-	
+	Py_XDECREF(_pFunc);
+	Py_DECREF(_pModule);
+
+	if (Py_FinalizeEx() < 0)
+	{
+		printf("Py_FinalizeEx() < 0 \n");
+		ASSERT_CRASH(true == false);
+	}
 }

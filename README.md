@@ -64,11 +64,14 @@ When a drone detection application is developed, users can install the applicati
 
 🏄 Hardware
 ```markdown
-Asus Zenbook - AMD 5625U
-Asus Zenbook Duo - i5-1135G7
+
 ```
 
 🏂 Software
+### Acoustic UAV Detection Applicaiton
+![image](https://user-images.githubusercontent.com/42498765/221331419-de8b36c0-ef35-42cf-8389-7d83ffced021.png)
+
+🖥️ Environment Setting
 ```markdown
 Application
  Android Studio Electric Eel | 2022.1.1 (Build #AI-221.6008.13.2211.9477386, built on January 11, 2023)
@@ -79,10 +82,6 @@ Application
    - jLibrosa 1.1.8
    - tensorflow lite 2.5.0
    - Android Wave Recorder 1.7.0
-```
-🖥️ Environment Setting
-```markdown
-
 ```
 
 💫 Installation

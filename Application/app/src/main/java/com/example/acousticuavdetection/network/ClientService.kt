@@ -49,7 +49,6 @@ class ClientService constructor(private val _type: ServiceType, private val _net
             _session.GetSocketChannel().write(byteBuffer); // Send through socket channel
         }
 
-
     }
 
     fun RecvData()
@@ -102,5 +101,6 @@ class ClientService constructor(private val _type: ServiceType, private val _net
     fun GetServiceType(): ServiceType { return _type; }
     fun GetNetAddress(): NetAddress { return _netAddress; }
     fun GetSelectorCore(): SelectorCore? { return _selectorCore; }
+
 
 }

@@ -25,7 +25,7 @@ void Session::Send(SendBufferRef sendBuffer)
 
 	bool registerSend = false;
 
-	// if RegisterSend wasn't called, call
+	// 현재 RegisterSend가 걸리지 않은 상태라면, 걸어준다
 	{
 		WRITE_LOCK;
 
@@ -34,8 +34,6 @@ void Session::Send(SendBufferRef sendBuffer)
 		if (_sendRegistered.exchange(true) == false)
 			registerSend = true;
 	}
-
-	cout << "Session::Send()" << endl;
 
 	if (registerSend)
 		RegisterSend();
@@ -192,7 +190,7 @@ void Session::ProcessConnect() // Called in Listener when the Listener socket ac
 	// Should be redefined in contents side
 	OnConnected();
 
-
+	// 수신 등록
 	RegisterRecv();
 }
 

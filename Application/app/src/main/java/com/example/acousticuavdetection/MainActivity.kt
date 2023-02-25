@@ -64,12 +64,12 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate Service object. Service objects create and manage session.
         // Communication with server can be done through service objects.
-        GClientService = ClientService(ServiceType.Client, NetAddress("3.219.21.67", 7367), ServerSession(),1, this);
-
+        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
+        
 
         // Make another thread for receiving data from the server.
-        thread(start = true) {
-            assert(GClientService.Start());
+        thread(start==true) {
+        assert(GClientService.Start());
             while (true)
             {
                 GClientService.RecvData();
@@ -195,4 +195,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-

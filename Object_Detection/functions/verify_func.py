@@ -15,7 +15,6 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 import librosa
 from tensorflow.keras.optimizers.experimental import Adadelta
-from sklearn.preprocessing import StandardScaler
 
 
 # Verify svm conversion into tensorflow
@@ -48,6 +47,7 @@ def verify_svm():
     tf_model.fit(x_train, y_train)
     # Save model file
     tf_model.save('../save/tf_svm_model.h5')
+
 
 # Verify shape of features
 def verify_feature():
@@ -91,6 +91,6 @@ def verify_feature():
         
 if __name__ == '__main__':
     verify_svm()
-    #verify_feature()
+    verify_feature()
 
 
