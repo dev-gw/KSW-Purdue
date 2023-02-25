@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity() {
     fun changeResult(result: Int)
     {
         networkInferenceTimerEnd()
-        when (result as UInt)
+        when (result.toUInt())
         {
             DetectionResult.Noise.id -> {
                 binding_main.progressBar2.visibility = GONE; binding_main.progressBar1.visibility = VISIBLE; }

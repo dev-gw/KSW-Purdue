@@ -32,7 +32,7 @@ class ClientService constructor(private val _type: ServiceType, private val _net
 
         return true;
     }
-    fun CanStart() : Boolean { return _sessionFactory != null; }
+    fun CanStart() : Boolean { return _sessionFactory != null }
 
     fun SendAudioData(floatArray: FloatArray)
     {
