@@ -89,6 +89,8 @@ bool Session::RegisterConnect()
 	socklen_t sockAddrLen = sizeof(sockAddr);
 	if (connect(_socket, reinterpret_cast<sockaddr*>(&sockAddr), sockAddrLen) < 0)
 	{
+		
+		exit(1);
 		return false;
 	}
 	

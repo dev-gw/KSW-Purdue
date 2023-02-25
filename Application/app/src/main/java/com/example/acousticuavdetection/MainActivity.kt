@@ -25,6 +25,7 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.Timer
 import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     init{
@@ -64,10 +65,11 @@ class MainActivity : AppCompatActivity() {
         // Instantiate Service object. Service objects create and manage session.
         // Communication with server can be done through service objects.
         GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
-        assert(GClientService.Start());
+        
 
         // Make another thread for receiving data from the server.
-        Thread {
+        thread(start=true) {
+        assert(GClientService.Start());
             while (true)
             {
                 GClientService.RecvData();
@@ -178,7 +180,7 @@ class MainActivity : AppCompatActivity() {
     fun changeResult(result: Int)
     {
         networkInferenceTimerEnd()
-        when (result.toUInt())
+        when (result as UInt)
         {
             DetectionResult.Noise.id -> {
                 binding_main.progressBar2.visibility = GONE; binding_main.progressBar1.visibility = VISIBLE; }
@@ -193,4 +195,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-

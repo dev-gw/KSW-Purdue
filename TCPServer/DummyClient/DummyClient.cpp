@@ -54,9 +54,9 @@ int main()
 	//this_thread::sleep_for(chrono::seconds(1));
 
 	ClientServiceRef service = MakeShared<ClientService>(
-		NetAddress("192.168.227.141", 632),
+		NetAddress("172.31.56.226", 7367),
 		MakeShared<EpollCore>(),
-		MakeShared<ServerSession>, // TODO : SessionManager µî
+		MakeShared<ServerSession>, // TODO : SessionManager ÂµÃ®
 		1);
 
 	ASSERT_CRASH(service->Start());
