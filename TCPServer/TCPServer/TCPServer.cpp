@@ -24,13 +24,13 @@ void DoWorkerJob(ServerServiceRef& service)
 	{
 		LEndTickCount = ::GetTickCount_64() + WORKER_TICK;
 
-		// ³×Æ®¿öÅ© ÀÔÃâ·Â Ã³¸® -> ÀÎ°ÔÀÓ ·ÎÁ÷±îÁö (ÆĞÅ¶ ÇÚµé·¯¿¡ ÀÇÇØ)
+		// ë„¤íŠ¸ì›Œí¬ ì…ì¶œë ¥ ì²˜ë¦¬ -> ì¸ê²Œì„ ë¡œì§ê¹Œì§€ (íŒ¨í‚· í•¸ë“¤ëŸ¬ì— ì˜í•´)
 		service->GetEpollCore()->Dispatch(10);
 
-		// ¿¹¾àµÈ ÀÏ°¨ Ã³¸®
+		// ì˜ˆì•½ëœ ì¼ê° ì²˜ë¦¬
 		ThreadManager::DistributeReservedJobs();
 
-		// ±Û·Î¹ú Å¥
+		// ê¸€ë¡œë²Œ í
 		ThreadManager::DoGlobalQueueWork();
 	}
 }
@@ -75,7 +75,7 @@ int main()
 
 
 	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress("192.168.227.141", 632),
+		NetAddress("172.31.56.226", 7367),
 		MakeShared<EpollCore>(),
 		MakeShared<DetectingSession>,
 		10);
