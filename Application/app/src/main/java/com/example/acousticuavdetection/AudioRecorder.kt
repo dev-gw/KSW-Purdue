@@ -27,15 +27,14 @@ class AudioRecorder(context: Context) {
     fun startRecording() {
         mfcc = FeatureExtraction(mContext.applicationContext as Application)
         var fileIndex = 0 //index of file
-        //var basePath = "${Environment.getExternalStorageDirectory()}/uav_audio/audio" //Base path of audio files
         val basePath = "${mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio/audio"
-        //Look for old audio files and delete them
-        deleteLegacy(basePath, ".wav")
+
+        deleteLegacy(basePath, ".wav") //Look for old audio files and delete them
         deleteLegacy("${mContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature/audio_feature", "")
+        // Look for old extracted feature files and delete them
 
         mIsRecording = true
         if (mIsRecording as Boolean) {
-            //Run on new thread since it'll be in the background
             waveRecorder.changeFilePath(
                 basePath + String.format(
                     fileIndex.toString(),
@@ -48,7 +47,7 @@ class AudioRecorder(context: Context) {
             divideTimer!!.scheduleAtFixedRate(
                 timerTask {
                     waveRecorder.stopRecording()
-                    mfcc!!.performMfcc(fileIndex)
+                    mfcc!!.performMfcc(fileIndex) // send .wav audio file's path to MFCC
                     fileIndex++ //increment file name
                     waveRecorder.changeFilePath(
                         basePath + String.format(
@@ -57,7 +56,7 @@ class AudioRecorder(context: Context) {
                         ) + ".wav"
                     )
                     waveRecorder.startRecording()
-                }, 5000, 5200)
+                }, 5000, 5200) // record audio data each 5 seconds
         }
     }
 
@@ -68,7 +67,7 @@ class AudioRecorder(context: Context) {
         waveRecorder.stopRecording()
     }
     fun stopTimer() {
-        divideTimer?.cancel()
+        divideTimer?.cancel() // stop thread
     }
 
     fun deleteLegacy(filePath: String, fileFormat: String){
