@@ -16,7 +16,7 @@ public:
 	USE_LOCK;
 
 	string _MLFileName = "server.server_main";
-	string _modelPath = "/root/projects/Object_Detection/save/svm_model.pkl";
+	string _modelPath = "/usr/projects/Object_Detection/save/svm_model.pkl";
 	uint8 _numOfCall = 1;
 	vector<string> _MLFunctionName;
 

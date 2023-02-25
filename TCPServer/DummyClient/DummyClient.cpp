@@ -54,7 +54,7 @@ int main()
 	//this_thread::sleep_for(chrono::seconds(1));
 
 	ClientServiceRef service = MakeShared<ClientService>(
-		NetAddress("192.168.122.1", 632),
+		NetAddress("192.168.227.134", 632),
 		MakeShared<EpollCore>(),
 		MakeShared<ServerSession>, // TODO : SessionManager µî
 		1);
