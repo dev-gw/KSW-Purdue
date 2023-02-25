@@ -68,10 +68,9 @@ When a drone detection application is developed, users can install the applicati
 ```
 
 🏂 Software
-```markdown
 ### Acoustic UAV Detection Applicaiton
 ![image](https://user-images.githubusercontent.com/42498765/221331419-de8b36c0-ef35-42cf-8389-7d83ffced021.png)
-```
+
 🖥️ Environment Setting
 ```markdown
 Application
