@@ -100,7 +100,7 @@ class PKT_C_AUDIO_DATA_WRITE
 {
 public:
 	using FeatureList = PacketList<float>();
-	// 서버에 packet id, 사이즈, feature 값들을 보낸다. packetSize는 패킷의 데이터 유효성 검증을 위한 것
+	// Send packet id, size, feature data to the Server. PacketSize is for validating packets
 	PKT_C_AUDIO_DATA_WRITE(uint64 id, float* inFeatures)
 	{
 		_sendBuffer = GSendBufferManager->Open(256);

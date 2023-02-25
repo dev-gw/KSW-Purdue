@@ -39,15 +39,15 @@ void MLManager::Init()
 
 	_pFunc = PyObject_GetAttrString(_pModule, _MLFunctionName[0].c_str());
 
-	_pModelPath = PyUnicode_DecodeFSDefault(_modelPath.c_str());
-	ASSERT_CRASH(_pFunc && _pModelPath);
+	
+	ASSERT_CRASH(_pFunc);
 }
 
 
 int8 MLManager::RunModel(const float data[], uint16 featureCount)
 {
 	WRITE_LOCK;
-	PyObject* pArgs, * pValue, * pData;
+	PyObject* pArgs, * pValue, * pData, * pModelPath;
 
 
 	ASSERT_CRASH(_pModule != NULL);
@@ -60,6 +60,8 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
     /* pFunc is a new reference */
 	if (_pFunc && PyCallable_Check(_pFunc)) // python func can be called
 	{
+		pModelPath = PyUnicode_DecodeFSDefault(_modelPath.c_str());
+
 		pArgs = PyTuple_New(2);
 		//pData = PyTuple_New(dataLen);
 		pData = PyTuple_New(featureCount);
@@ -86,7 +88,7 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
 		}
 
 		PyTuple_SetItem(pArgs, 0, pData); // First argument of detect_result func
-		PyTuple_SetItem(pArgs, 1, _pModelPath); // Second argument
+		PyTuple_SetItem(pArgs, 1, pModelPath); // Second argument
 
 		pValue = PyObject_CallObject(_pFunc, pArgs); // Get the result
 		Py_DECREF(pArgs);

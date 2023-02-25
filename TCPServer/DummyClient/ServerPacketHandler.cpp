@@ -73,6 +73,6 @@ bool ServerPacketHandler::Handle_S_DETECTION_RESULT(PacketSessionRef& session, B
 
 	cout << detectResult << endl;
 	cout << "Spent time for getting result: " << spentTime << "ms" << endl;
-	exit(0);
+
 	return true;
 }

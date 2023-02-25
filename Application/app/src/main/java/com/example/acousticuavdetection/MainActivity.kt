@@ -1,35 +1,23 @@
 package com.example.acousticuavdetection
 
-import Network.*
-import android.Manifest
+import com.example.acousticuavdetection.network.*
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.PagerAdapter
 import com.example.acousticuavdetection.databinding.ActivityMainBinding
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import org.tensorflow.lite.Interpreter
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -37,7 +25,6 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.Timer
 import kotlin.collections.ArrayList
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     init{
@@ -66,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         val actionBar: ActionBar? = supportActionBar
         actionBar?.hide() // Hide Top Application bar with application name
 
+        // check directory is exist
         if (!(File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").exists())){
             File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_audio").mkdir()
         }
@@ -75,17 +63,11 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate Service object. Service objects create and manage session.
         // Communication with server can be done through service objects.
-        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.122.1", 632), ServerSession(),1, this);
-
-
+        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
+        assert(GClientService.Start());
 
         // Make another thread for receiving data from the server.
-        // Should be modified in future.
-        thread(start = true)
-        {
-            println("Network thread started");
-            assert(GClientService.Start());
-            println("Client Service started");
+        Thread {
             while (true)
             {
                 GClientService.RecvData();
@@ -101,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    binding_main.fab.startAnimation(buttonAnimation);
+                    binding_main.fab.startAnimation(buttonAnimation); // record button blink animation start
                 }
             )
         } else {
@@ -110,15 +92,11 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread(
                 Runnable {
                     changePhoneToNoise()
-                    binding_main.fab.clearAnimation()
+                    binding_main.fab.clearAnimation() // record button blink animation end
                 }
             )
         }
     }
-    fun fab2Click (view: View) {
-        Toast.makeText(this, "MFCC called. Check logcat.", Toast.LENGTH_LONG).show()
-    }
-
 
     private fun startRecording() {
         mRecorder = AudioRecorder(context = this)
@@ -147,7 +125,7 @@ class MainActivity : AppCompatActivity() {
     }
     fun changePhoneInferenceTime(text: Long){
         runOnUiThread{
-            binding_main.textView.text = "${text}ms"
+            binding_main.textView.text = "${text} ns"
         }
     }
     fun checkPhoneSwitch(): Boolean {
@@ -155,10 +133,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun networkInferenceTimerStart() {
-        startTime = System.currentTimeMillis()
+        startTime = System.nanoTime()
     }
     fun networkInferenceTimerEnd() {
-        endTime = System.currentTimeMillis() - startTime!!
+        endTime = System.nanoTime() - startTime!!
         changePhoneInferenceTime(endTime!!)
         startTime = 0
         endTime = 0
@@ -177,7 +155,7 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-    fun getTfliteInterpreter(modelPath: String): Interpreter? {
+    fun getTfliteInterpreter(modelPath: String): Interpreter? { // model call function
         try {
             return Interpreter(loadModelFile(instance, modelPath)!!)
         } catch (e: Exception) {
@@ -185,6 +163,8 @@ class MainActivity : AppCompatActivity() {
         }
         return null
     }
+
+    // lode tflite model file from assets folder
     @Throws(IOException::class)
     private fun loadModelFile(activity: Activity, modelPath: String): MappedByteBuffer? {
         val fileDescriptor = activity.assets.openFd(modelPath)
@@ -193,13 +173,6 @@ class MainActivity : AppCompatActivity() {
         val startOffset = fileDescriptor.startOffset
         val declaredLength = fileDescriptor.declaredLength
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
-    }
-    companion object {
-        @SuppressLint("StaticFieldLeak")
-        lateinit var instance: MainActivity
-        fun ApplicationContext() : Context {
-            return instance.applicationContext
-        }
     }
 
     fun changeResult(result: Int)
@@ -210,6 +183,13 @@ class MainActivity : AppCompatActivity() {
             DetectionResult.Noise.id -> {
                 binding_main.progressBar2.visibility = GONE; binding_main.progressBar1.visibility = VISIBLE; }
             else -> { binding_main.progressBar1.visibility = GONE; binding_main.progressBar2.visibility = VISIBLE; }
+        }
+    }
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        lateinit var instance: MainActivity
+        fun ApplicationContext() : Context {
+            return instance.applicationContext
         }
     }
 }

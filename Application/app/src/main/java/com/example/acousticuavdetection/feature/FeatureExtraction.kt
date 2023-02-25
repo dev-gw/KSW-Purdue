@@ -15,7 +15,6 @@ import com.jlibrosa.audio.JLibrosa
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 
 class FeatureExtraction(application: Application) : AndroidViewModel(application) {
     private val TAG = "AcousticUAVDetection"
@@ -23,28 +22,25 @@ class FeatureExtraction(application: Application) : AndroidViewModel(application
 
     var outputFile: File? = null
     var fileOutputStream: FileOutputStream? = null
-    var filePath:String = "${application.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}"
+    var filePath:String = "${application.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}" // android application data folder
     fun performMfcc(fileIndex: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val audioFeatureValues = jLibrosa.loadAndRead(filePath + "/uav_audio/audio${String.format(fileIndex.toString(),"%02d")}.wav", 22050, -1)
             val result = jLibrosa.generateMFCCFeatures(audioFeatureValues, 22050,
                 40, 2048, 128,512)
             val process_result = dataStandardization(to2DFloatArray(result))
-            /* --------------------
-                Send data to Server
-               -------------------- */
-            if (MainActivity.instance.checkPhoneSwitch()){
+            if (MainActivity.instance.checkPhoneSwitch()){ // If network mode is enable
                 MainActivity.instance.networkInferenceTimerStart()
                 CoroutineScope(Dispatchers.IO).launch { MainActivity.instance.GClientService.SendAudioData(process_result); }
             }
-            else{
-                val audioHelper = AudioClassificationHelper(context = getApplication(), mfccFeature = process_result)
+            else{ // if network mode is unable
+                val audioHelper = AudioClassificationHelper(mfccFeature = process_result)
             }
 
             outputFile = File("${filePath}/uav_feature/", "audio_feature${String.format(fileIndex.toString(),"%02d")}")
             fileOutputStream = FileOutputStream(outputFile)
             fileOutputStream!!.write(process_result.contentToString().toByteArray())
-            fileOutputStream!!.close()
+            fileOutputStream!!.close() // save extracted data
         }
     }
 

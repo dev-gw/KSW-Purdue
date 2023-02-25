@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-class CheckPermission {
+class CheckPermission { // check STORAGE, MIC, WRITE/READ, INTERNET, NETWORK_STATE permission
     fun checkNeededPermissions() {
         println("Requesting permission")
         if (ContextCompat.checkSelfPermission(MainActivity.ApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
