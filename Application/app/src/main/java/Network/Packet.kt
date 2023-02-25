@@ -27,7 +27,7 @@ class PKT_C_AUDIO_DATA : IPacket
 {
     override var pktSize = 4 + 4 + 4 * 40;
     override var pktID = PacketID.C_AUDIO_DATA.id;
-    var featureOffset: Int = 4 + 4 + 4;
+    var featureOffset: Int = 4 + 4 + 4 + 4; // pktSize + pktID + featureOffset + featureCount
     var featureCount: Int = 40;
     var featureData: FloatArray = FloatArray(featureCount);
 

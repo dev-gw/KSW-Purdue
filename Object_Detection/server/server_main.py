@@ -12,7 +12,7 @@ import pickle
 import joblib
 import sys
 import warnings
-import scikitlearn
+import sklearn
 
 warnings.filterwarnings(action='ignore')
 
@@ -28,10 +28,10 @@ def detect_result(data, model_path):
     svm_model = joblib.load(model_path)
 
     # Processing
-    #X = np.array(data.tolist()).reshape(1,-1)
+    X = np.array(list(data)).reshape(2,-1)
 
     # prediction
-    result = svm_model.predict(data)[0]
+    result = svm_model.predict(X)[0]
     
     return result
 
