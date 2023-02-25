@@ -1,7 +1,7 @@
 #pragma once
 
 #define PY_SSIZE_T_CLEAN
-#include <python3.9/Python.h>
+#include <Python.h>
 
 class MLManager
 {
