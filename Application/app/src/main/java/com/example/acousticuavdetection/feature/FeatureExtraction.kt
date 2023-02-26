@@ -2,7 +2,6 @@ package com.example.acousticuavdetection.feature
 
 import android.app.Application
 import android.os.Environment
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 import androidx.lifecycle.AndroidViewModel
@@ -45,7 +44,7 @@ class FeatureExtraction(application: Application) : AndroidViewModel(application
     }
 
     private fun to2DFloatArray(array: Array<FloatArray>): FloatArray {
-        var sum = 0F
+        var sum: Float?
         val result = FloatArray(41)
         for (i in array.indices) {
             sum = 0F

@@ -7,7 +7,7 @@ import org.tensorflow.lite.Interpreter
 class AudioClassificationHelper(
     var mfccFeature: FloatArray,
 ) {
-    val tflite: Interpreter? = MainActivity.instance.getTfliteInterpreter("tf_svm_model2.tflite")
+    val tflite: Interpreter? = MainActivity.instance.getTfliteInterpreter("tf_svm_model2.tflite") // call model file
 
     init {
         initClassifier()
