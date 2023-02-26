@@ -21,6 +21,9 @@ def detect_result(data, model_path):
     
     # Load model
     svm_model = joblib.load(model_path)
+    
+    # processing
+    data = list(data).reshape(1,-1)
 
     # prediction
     result = svm_model.predict(data)[0]

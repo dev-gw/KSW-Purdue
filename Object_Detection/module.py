@@ -67,7 +67,6 @@ def concat_data(feature):
 def svm_base(C):
     svm_model = svm.LinearSVC(C=C, loss='squared_hinge')
     return svm_model
-## libSVM for implementation
 
 ## GNB (Gaussian Naive Bayes)
 def gnb_base():

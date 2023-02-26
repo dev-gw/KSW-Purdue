@@ -40,7 +40,7 @@ except:
     pass
 
 # Data input - pkl format
-df = pd.read_pickle("save/tonnetz_3.pkl")
+df = pd.read_pickle("save/mfcc_3.pkl")
 # processing
 X = np.array(df.feature.tolist())
 y = np.array(df.class_label.tolist())
