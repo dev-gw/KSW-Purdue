@@ -1,6 +1,5 @@
 package com.example.acousticuavdetection
 
-import com.example.acousticuavdetection.network.*
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -10,37 +9,30 @@ import android.os.Environment
 import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.example.acousticuavdetection.databinding.ActivityMainBinding
-import com.example.acousticuavdetection.feature.FeatureExtraction
+import com.example.acousticuavdetection.network.*
+import kotlinx.coroutines.*
 import org.tensorflow.lite.Interpreter
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
+import java.lang.Runnable
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
-import java.util.Timer
-import kotlin.collections.ArrayList
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     init{
         instance = this
     }
     private lateinit var binding_main: ActivityMainBinding
-    var viewList = ArrayList<View>()
-    private lateinit var mStartButton : Button
     private var mRecorder: AudioRecorder? = null
     private var mIsRecording = false
-    private val viewModel: FeatureExtraction by viewModels()
-    private var timer = Timer()
     private var startTime: Long? = null
     private var endTime: Long? = null
-    lateinit var GClientService: ClientService;
+    lateinit var GClientService: ClientService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,30 +54,35 @@ class MainActivity : AppCompatActivity() {
             File("${getExternalFilesDir(Environment.DIRECTORY_MUSIC)}/uav_feature").mkdir()
         }
 
+
         // Instantiate Service object. Service objects create and manage session.
         // Communication with server can be done through service objects.
-        GClientService = ClientService(ServiceType.Client, NetAddress("192.168.227.141", 632), ServerSession(),1, this);
-        
+        GClientService = ClientService(ServiceType.Client, NetAddress("3.219.21.67", 7367), ServerSession(),1, this);
+
 
         // Make another thread for receiving data from the server.
-        thread(start=true) {
-        assert(GClientService.Start());
-            while (true)
-            {
-                GClientService.RecvData();
-            };
-        }
+
+//        GlobalScope.launch {
+//            startNetwork()
+//            while (true)
+//            {
+//                if (GClientService.GetOwnSession().IsConnected())
+//                    GClientService.RecvData();
+//            }
+//        }
     }
 
-
+    suspend fun startNetwork(){
+        withContext(Dispatchers.Default) { GClientService.Start() }
+    }
     fun fabClick(view: View) {
         if (!mIsRecording) {
-            val buttonAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink);
+            val buttonAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink)
             startRecording()
             mIsRecording = !mIsRecording
             runOnUiThread(
                 Runnable {
-                    binding_main.fab.startAnimation(buttonAnimation); // record button blink animation start
+                    binding_main.fab.startAnimation(buttonAnimation) // record button blink animation start
                 }
             )
         } else {
@@ -180,7 +177,7 @@ class MainActivity : AppCompatActivity() {
     fun changeResult(result: Int)
     {
         networkInferenceTimerEnd()
-        when (result as UInt)
+        when (result.toUInt())
         {
             DetectionResult.Noise.id -> {
                 binding_main.progressBar2.visibility = GONE; binding_main.progressBar1.visibility = VISIBLE; }

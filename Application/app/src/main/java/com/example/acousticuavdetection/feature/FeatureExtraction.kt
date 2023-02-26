@@ -2,7 +2,6 @@ package com.example.acousticuavdetection.feature
 
 import android.app.Application
 import android.os.Environment
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 import androidx.lifecycle.AndroidViewModel
@@ -25,9 +24,6 @@ class FeatureExtraction(application: Application) : AndroidViewModel(application
     var filePath:String = "${application.getExternalFilesDir(Environment.DIRECTORY_MUSIC)}" // android application data folder
     fun performMfcc(fileIndex: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-//            val audioFeatureValues2 = jLibrosa.loadAndRead("${Environment.getExternalStorageDirectory()}" + "/UAV/6.wav", 22050, -1)
-//            val result2 = jLibrosa.generateMFCCFeatures(audioFeatureValues2, 22050,
-//                40, 2048, 128,512)
             val audioFeatureValues = jLibrosa.loadAndRead(filePath + "/uav_audio/audio${String.format(fileIndex.toString(),"%02d")}.wav", 22050, -1)
             val result = jLibrosa.generateMFCCFeatures(audioFeatureValues, 22050,
                 40, 2048, 128,512)
@@ -42,16 +38,13 @@ class FeatureExtraction(application: Application) : AndroidViewModel(application
 
             outputFile = File("${filePath}/uav_feature/", "audio_feature${String.format(fileIndex.toString(),"%02d")}")
             fileOutputStream = FileOutputStream(outputFile)
-//            result2.forEach {
-//                fileOutputStream!!.write("${it.contentToString()},".toByteArray())
-//            }
             fileOutputStream!!.write(process_result.contentToString().toByteArray())
             fileOutputStream!!.close() // save extracted data
         }
     }
 
     private fun to2DFloatArray(array: Array<FloatArray>): FloatArray {
-        var sum: Float? = null
+        var sum: Float?
         val result = FloatArray(41)
         for (i in array.indices) {
             sum = 0F
