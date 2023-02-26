@@ -25,7 +25,6 @@ void Session::Send(SendBufferRef sendBuffer)
 
 	bool registerSend = false;
 
-	// 현재 RegisterSend가 걸리지 않은 상태라면, 걸어준다
 	{
 		WRITE_LOCK;
 
@@ -145,14 +144,12 @@ void Session::RegisterSend()
 			SendBufferRef sendBuffer = _sendQueue.front();
 
 			writeSize += sendBuffer->WriteSize();
-			// TODO : 예외 체크
 
 			_sendQueue.pop();
 			_sendEvent.sendBuffers.push_back(sendBuffer);
 		}
 	}
 
-	// Scatter-Gather (흩어져 있는 데이터들을 모아서 한 방에 보낸다)
 	Vector<BYTE> bufs;
 	bufs.reserve(_sendEvent.sendBuffers.size());
 
@@ -190,7 +187,6 @@ void Session::ProcessConnect() // Called in Listener when the Listener socket ac
 	// Should be redefined in contents side
 	OnConnected();
 
-	// 수신 등록
 	RegisterRecv();
 }
 
@@ -300,16 +296,13 @@ int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
 	while (true)
 	{
 		int32 dataSize = len - processLen;
-		// 최소한 헤더는 파싱할 수 있어야 한다
 		if (dataSize < sizeof(PacketHeader))
 			break;
 
 		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[processLen]));
-		// 헤더에 기록된 패킷 크기를 파싱할 수 있어야 한다
 		if (dataSize < header.size)
 			break;
 
-		// 패킷 조립 성공
 		OnRecvPacket(&buffer[processLen], header.size);
 
 		processLen += header.size;

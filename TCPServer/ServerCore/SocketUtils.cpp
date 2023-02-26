@@ -9,8 +9,6 @@
 
 void SocketUtils::Init()
 {
-
-	/* 런타임에 주소 얻어오는 API */
 	SOCKET dummySocket = CreateSocket();
 	if (dummySocket < 0)
 	{

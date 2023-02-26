@@ -72,7 +72,7 @@ SendBufferRef SendBufferManager::Open(uint32 size)
 
 	ASSERT_CRASH(LSendBufferChunk->IsOpen() == false);
 
-	// 다 썼으면 버리고 새거로 교체
+
 	if (LSendBufferChunk->FreeSize() < size)
 	{
 		LSendBufferChunk = Pop(); // WRITE_LOCK

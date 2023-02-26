@@ -29,7 +29,7 @@ MemoryHeader* MemoryPool::Pop()
 {
 	MemoryHeader* memory = _headerQueue.Pop();
 
-	// 없으면 새로 만들다
+
 	if (memory == nullptr)
 	{
 		memory = reinterpret_cast<MemoryHeader*>(::aligned_alloc(_allocSize, SLIST_ALIGNMENT));

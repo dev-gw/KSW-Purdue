@@ -30,8 +30,8 @@ public:
 // [ PKT_S_DETECTION_RESULT ][result]
 struct PKT_S_DETECTION_RESULT
 {
-	uint16 packetSize; // 공용 헤더
-	uint16 packetId; // 공용 헤더
+	uint16 packetSize;
+	uint16 packetId;
 	bool result;
 };
 
@@ -53,7 +53,7 @@ public:
 
 	SendBufferRef CloseAndReturn()
 	{
-		// 패킷 사이즈 계산
+		// Calculate the size of the packet
 		_pkt->packetSize = _bw.WriteSize();
 
 		_sendBuffer->Close(_bw.WriteSize());

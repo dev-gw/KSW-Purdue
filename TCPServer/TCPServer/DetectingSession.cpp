@@ -22,7 +22,7 @@ void DetectingSession::OnRecvPacket(BYTE* buffer, int32 len)
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
 	cout << "OnRecvPacket()" << endl;
-	// TODO : packetId 대역 체크
+
 	ClientPacketHandler::HandlePacket(session, buffer, len);
 }
 

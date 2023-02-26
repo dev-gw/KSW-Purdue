@@ -21,7 +21,6 @@ public:
 	static bool SetRecvBufferSize(SOCKET socket, int32 size);
 	static bool SetSendBufferSize(SOCKET socket, int32 size);
 	static bool SetTcpNoDelay(SOCKET socket, int32 flag);
-	static bool SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket);
 
 
 	static bool Bind(SOCKET socket, NetAddress netAddr);

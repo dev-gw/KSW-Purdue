@@ -22,12 +22,11 @@ def detect_result(data, model_path):
     # Load model
     svm_model = joblib.load(model_path)
     
-    # Processing
-    # X = np.mean(data.T, axis=0)
-    X = np.array(data.tolist()).reshape(1,-1)
+    # processing
+    data = np.array(data).reshape(1,-1)
 
     # prediction
-    result = svm_model.predict(X)[0]
+    result = svm_model.predict(data)[0]
     
     return result
 

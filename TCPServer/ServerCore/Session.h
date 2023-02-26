@@ -25,7 +25,6 @@ public:
 	virtual ~Session();
 
 public:
-	/* 외부에서 사용 */
 	void				Send(SendBufferRef sendBuffer);
 	bool				Connect();
 	void				Disconnect(const char* cause);
@@ -34,7 +33,6 @@ public:
 	void				SetService(shared_ptr<Service> service) { _service = service; }
 
 public:
-	/* 정보 관련 */
 	void				SetNetAddress(NetAddress address) { _netAddress = address; }
 	void				SetSocket(SOCKET socket) { _socket = socket; }
 	NetAddress			GetAddress() { return _netAddress; }
@@ -43,12 +41,10 @@ public:
 	SessionRef			GetSessionRef() { return static_pointer_cast<Session>(shared_from_this()); }
 
 private:
-	/* 인터페이스 구현 */
 	virtual int			GetHandle() override;
 	virtual void		Dispatch(EpollEvent* epollEvent) override;
 
 private:
-	/* 전송 관련 */
 	bool				RegisterConnect();
 	bool				RegisterDisconnect();
 	void				RegisterRecv();
@@ -62,7 +58,6 @@ private:
 	void				HandleError(int32 errorCode);
 
 protected:
-	/* 컨텐츠 코드에서 재정의 */
 	virtual void		OnConnected() { }
 	virtual int32		OnRecv(BYTE* buffer, int32 len) { return len; }
 	virtual void		OnSend(int32 len) { }
@@ -100,7 +95,7 @@ private:
 struct PacketHeader
 {
 	uint16 size;
-	uint16 id; // 프로토콜ID (ex. 1=login, 2=audio data)
+	uint16 id; // ProtocolID (ex. 1=login, 2=audio data)
 };
 
 class PacketSession : public Session

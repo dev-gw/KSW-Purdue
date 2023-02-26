@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-* Verify SVM conversion into tf model.
+* Verify functions.
 * Save tf models.
 
 @author: Gwangwon Kim
