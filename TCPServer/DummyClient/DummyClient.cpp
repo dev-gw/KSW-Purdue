@@ -61,7 +61,7 @@ int main()
 
 	ASSERT_CRASH(service->Start());
 
-	/*for (int32 i = 0; i < 1; i++)
+	for (int32 threadNum = 0; threadNum < 1; ++threadNum)
 	{
 		GThreadManager->Launch([=]()
 			{
@@ -70,7 +70,7 @@ int main()
 					service->GetEpollCore()->Dispatch();
 				}
 			});
-	}*/
+	}
 
 	PKT_C_AUDIO_DATA_WRITE pktWriter(C_AUDIO_DATA, data);
 
@@ -78,11 +78,11 @@ int main()
 
 	SendBufferRef sendBuffer = pktWriter.CloseAndReturn();
 
-	for (int num = 0; num < 10; ++num)
+	for (int sendNum = 0; sendNum < 10; ++sendNum)
 	{
 		ServerPacketHandler::_startTime = GetTickCount_64();
 		service->Broadcast(sendBuffer);
-		this_thread::sleep_for(chrono::seconds(10));
+		this_thread::sleep_for(chrono::seconds(8));
 	}
 
 	GThreadManager->Join();

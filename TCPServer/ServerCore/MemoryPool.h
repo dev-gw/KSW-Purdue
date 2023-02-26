@@ -44,7 +44,7 @@ MemoryHeader
 	}
 
 	int32 allocSize;
-	// TODO : 필요한 추가 정보
+
 };
 
 /*-----------------
