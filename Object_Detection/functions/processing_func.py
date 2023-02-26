@@ -57,7 +57,7 @@ def trim_func():
         slice.export('../Dataset/trim_test/{}.wav'.format(i), format='wav')
 
 
-# Visualize audio data's feature
+# Visualize two features together
 def visualize_feature(feature):
     uav_path = '../Dataset/DJI_Phantom4/5.wav'
     noise_path = '../Dataset/noise/5.wav'
@@ -101,7 +101,7 @@ def visualize_feature(feature):
     else:
         print("Wrong input")
         
-# Visualize only MFCC feature
+# Visualize only one feature
 # uav_path = '../Dataset/DJI_Phantom4/5.wav'
 # noise_path = '../Dataset/noise/5.wav'
 def visualize_only_mfcc(title, path):

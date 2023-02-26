@@ -7,9 +7,11 @@
 ```bash
 ├── functions
 │   ├── function_test.py
+│   ├── verify_func.py
 │   └── processing_func.py
 ├── save
 │   ├── mfcc_3.pkl
+│   ├── ...
 │   └── svm_model.pkl
 ├── server
 │   └── server_main.py
