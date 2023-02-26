@@ -1,2 +1,2 @@
 *.cpp linguist-vendored
-*.go linguist-vendored=false
+*.java linguist-vendored
