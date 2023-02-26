@@ -11,32 +11,6 @@ class SelectorCore
 
 
     fun GetSelector(): Selector { return _selector; }
-//    fun Dispatch()
-//    {
-//        while (_selector.select() > 0)
-//        {
-//            var keys = _selector.selectedKeys().iterator()
-//            while (keys.hasNext())
-//            {
-//                var key = keys.next();
-//
-//                keys.remove();
-//
-//                if (key.isValid() == false)
-//                    continue;
-//
-//                if (key.isReadable())
-//                {
-//                    var session = key.attachment() as Session;
-//                    session.ProcessRecv(key);
-//                }
-//                else if (key.isWritable())
-//                {
-//                    this.Send(key);
-//                }
-//            }
-//        }
-//    }
 
     fun Send(key: SelectionKey)
     {

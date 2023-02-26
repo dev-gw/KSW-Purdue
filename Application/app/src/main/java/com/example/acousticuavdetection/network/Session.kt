@@ -1,5 +1,7 @@
 package com.example.acousticuavdetection.network
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
 import java.util.*
@@ -27,16 +29,18 @@ open class Session
         RegisterSend();
     }
 
-    fun Connect(): Boolean
+    suspend fun Connect(): Boolean
     {
         var netAddress: NetAddress = GetService().GetNetAddress();
         try
         {
-            _socketChannel = AsynchronousSocketChannel.open();
-            _socketChannel.connect(GetService().GetNetAddress().GetSockAddr());
+            withContext(Dispatchers.Default) { _socketChannel = AsynchronousSocketChannel.open(); }
+            withContext(Dispatchers.Default){
+                _socketChannel.connect(GetService().GetNetAddress().GetSockAddr())
+            }
 
             _recvBuffer = ByteBuffer.allocate(BufferSize.KB_64.size);
-
+            _connected = true;
             return true;
         }
         catch (e: Exception)
@@ -69,40 +73,15 @@ open class Session
 
     fun IsConnected(): Boolean { return _connected; }
 
-    fun GetSession(): Session { return this; }
+    fun GetSession(): Session { return this }
 
-//    fun RegisterConnect(): Boolean
-//    {
-//
-//    }
-
-//    fun RegisterDisconnect(): Boolean
-//    {
-//
-//    }
-
-//    suspend fun AsynchronousSocketChannel.asyncRead(buffer: ByteBuffer): Int {
-//        return suspendCoroutine { continuation ->
-//            this.read(buffer, continuation, ReadCompletionHandler)
-//        }
-//    }
-//
-//    object ReadCompletionHandler : CompletionHandler<Int, Continuation<Int>> {
-//        override fun completed(result: Int, attachment: Continuation<Int>) {
-//            attachment.resume(result)
-//        }
-//
-//        override fun failed(exc: Throwable, attachment: Continuation<Int>) {
-//            attachment.resumeWithException(exc)
-//        }
-//    }
-
-    fun RegisterRecv()
+    suspend fun RegisterRecv()
     {
         _recvBuffer.clear();
-        var readResult = _socketChannel.read(_recvBuffer);
-
-        readResult.get();
+        withContext(Dispatchers.Default) {
+            var readResult = _socketChannel.read(_recvBuffer)
+            readResult.get();
+        }
 
         ProcessRecv(_recvBuffer);
     }
@@ -111,8 +90,6 @@ open class Session
     {
         if (IsConnected() == false)
             return;
-
-
 
         var sendBuffer = ByteBuffer.allocate(_sendQueue.size * BufferSize.KB_64.size);
 
@@ -136,14 +113,9 @@ open class Session
 
     open fun OnConnected() { }
 
-//    open fun OnRecv(buffer: ByteBuffer): Int { }
-
     open fun OnSend(len: Int) { }
 
     open fun OnDisconnected() { }
-
-
-
 }
 
 
@@ -153,6 +125,4 @@ open class PacketSession: Session()
     fun GetPacketSession(): PacketSession { return this;}
 
     open fun OnRecvPacket(buffer: ByteBuffer, len: Int) { }
-
-
 }

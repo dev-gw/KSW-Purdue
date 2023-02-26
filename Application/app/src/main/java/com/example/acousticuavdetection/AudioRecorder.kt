@@ -3,13 +3,8 @@ package com.example.acousticuavdetection
 import android.app.Application
 import android.content.Context
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import com.example.acousticuavdetection.feature.FeatureExtraction
 import com.github.squti.androidwaverecorder.WaveRecorder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -17,7 +12,6 @@ import kotlin.concurrent.timerTask
 class AudioRecorder(context: Context) {
     private var mIsRecording: Boolean? = false
     private var mContext: Context = context
-    private var mStartTime: Long = 0
     var filePath:String = "${Environment.getExternalStorageDirectory()}/uav_audio/audio"
     val waveRecorder = WaveRecorder(filePath)
     var divideTimer: Timer? = null
@@ -72,8 +66,8 @@ class AudioRecorder(context: Context) {
 
     fun deleteLegacy(filePath: String, fileFormat: String){
         var fileIndex = 0
-        while (File(filePath + String.format(fileIndex.toString(), "%02d") + "$fileFormat").exists()) {
-            File(filePath + String.format(fileIndex.toString(), "%02d") + "$fileFormat").delete()
+        while (File(filePath + String.format(fileIndex.toString(), "%02d") + fileFormat).exists()) {
+            File(filePath + String.format(fileIndex.toString(), "%02d") + fileFormat).delete()
             fileIndex++
         }
     }

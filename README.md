@@ -1,95 +1,132 @@
-# 2023 Purdue UAV Payload Detection by SWATTER?
+# SWATTER
 
-# Environment Setting
+Deep learning based real time UAV detection using smartphones as Edge Computing device.
 
-## Android Application
+- 2023 Winter (Purdue University, West Lafayette, Indiana, USA)  
+</br>
 
-Android Studio Electirc Eel (2022.1.1)
+# Introduction
+UAV technology is currently being used in various fields such as agriculture, communication, logistics, and is expected to be used in more fields in the future.
+Unfortunately, as drone technology advances, incidents of careless misuse, military surveillance, and malicious activity of drones have increased.
+Drone detection is an important issue not only to prevent unfortunate accidents caused by drones, but also to prevent crime by detecting malicious drones. 
 
-Build #AI-221.6008.13.2211.9477386, built on January 11, 2023
+> **Novelty**
+>
 
-Runtime version: 11.0.15+0-b2043.56-887301 amd64
-
-VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
-
-Kotlin - 221-1.7.21-release-for-android-studio-AS5591.52
-
-
-
-📋 Project title
-```markdown
-Deep Learning based Real Time Acoustic UAV Detection using Smartphone as Edge Computing Device
 ```
-
-📆 Project Period
-```
-2023.01 ~ 2023.03 (in Purdue University, West Lafayette)
-```
-
-📌 Problem Statement
-```markdown
-UAV technology is currently being used in various fields such as agriculture, communication, logistics, 
-and is expected to be used in more fields in the future. 
-The global Unmanned Aerial Vehicle (UAV) market was valued at US $56.7 Billion in 2021 and is estimated to reach a valuation of 
-US $106.03 Billion by 2030 at a Compound Annual Growth Rate(CAGR) of 7.5% from 2022 to 2030. 
-However, with great power comes great responsibility. 
-Unfortunately, as drone technology advances, incidents of careless misuse, military surveillance, and malicious activity of drones have increased. 
-Specially, malicious drones threaten to stadiums, prisons, and oil & gas because of their ability to carry payloads bypassing ground security. 
-Drones also allow criminals to plot a heist, or hack into your phone or laptop. 
-Drone detection is an important issue not only to prevent unfortunate accidents caused by drones, but also to prevent crime by detecting malicious drones.
-```
-
-💡 Novelty
-```markdown
 1. Easy to use
-Many solutions use machine learning models with high performance to detect drones. 
-However, in order to apply a high-performance machine learning model, a computer with appropriate performance is required. 
-Therefore, in real life, if the user needs to check in real time if there is a drone nearby, 
-there is a possibility that there will be restrictions on its use. 
+Many solutions use machine learning models with high performance to detect drones.
+However, in order to apply a high-performance machine learning model, a computer with appropriate performance is required.
+Therefore, in real life, if the user needs to check in real time if there is a drone nearby, there is a possibility that there will be restrictions on its use.
 
 2. Use the application
 Even when users do not have radar, microphones, etc., other methods are needed to locate the drone. 
 Hence, in this paper, we propose a method for finding drones using a machine learning-based smartphone application. 
-Worldwide smartphone ownership rate in 2021 is estimated to be 67%, the same level since 2018 [1]. 
 Since most people are using smartphones, this solution is very practical. 
 When a drone detection application is developed, users can install the application with just a few touches and check if there is a drone near.
-
-[1] F. Laricchia, “Global smartphone penetration 2016-2021,” Statista, 17-Jan-2023. [Online]. Available: https://www.statista.com/statistics/203734/global-smartphone-penetration-per-capita-since-2005/. [Accessed: 30-Jan-2023].
 ```
 
-🏛️ System Overview
-```markdown
+</br>  
 
+
+# System Overview
+
+![그림1.png](code/imgs/%25EA%25B7%25B8%25EB%25A6%25BC1.png)
+
+</br>
+   
+# 📱Application
+
+
+[Code & Environment link](https://github.com/K-SW-SWATTER/KSW-Purdue/tree/main/Application)
+
+> **Setup**
+> 
+
+```bash
+Install .apk file in Android Smartphone (Android 8.1 or later)
 ```
 
-🏄 Hardware
-```markdown
+> **Implementation**
+> 
+1. Record sound data using [**Android-Wav-Recoder**](https://github.com/squti/Android-Wave-Recorder)
+2. Mel-frequency cepstral coefficients feature extraction with **[jlibrosa](https://github.com/Subtitle-Synchronizer/jlibrosa)**
+3. Input extracted feature data to Pre-trained model using [**Tensorflow lite Interpreter**](https://github.com/tensorflow/tensorflow)
+
+</br>   
+   
+# 📘Object_Detection
+
+[Code & Environment link](https://github.com/K-SW-SWATTER/KSW-Purdue/tree/main/Object_Detection)
+
+> **To run training code**
+> 
+- Download Object_Detection folder
+
+### Linux
 
 ```
+# Install Anaconda
+$ wget <https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh>
+$ bash 'Anaconda3-2022.10-Linux-x86_64.sh'
 
-🏂 Software
-### Acoustic UAV Detection Applicaiton
-![image](https://user-images.githubusercontent.com/42498765/221331419-de8b36c0-ef35-42cf-8389-7d83ffced021.png)
+# Run Anaconda
+$ source ~/.bashrc
+or
+$ . ~/.bashrc
 
-🖥️ Environment Setting
-```markdown
-Application
- Android Studio Electric Eel | 2022.1.1 (Build #AI-221.6008.13.2211.9477386, built on January 11, 2023)
-  - Gradle Plugin Version 7.4.0
-  - Gradle Version 7.5
-  - Target SDK Version API 32
- External Library
-   - jLibrosa 1.1.8
-   - tensorflow lite 2.5.0
-   - Android Wave Recorder 1.7.0
+# Make virtual environment
+conda create -n uavml python==3.9.5
+conda activate uavml
+sudo apt-get install libsndfile1
+sudo apt-get install make
+
+# Run training code
+make env
+make train
 ```
 
-💫 Installation
-```markdown
+> **Feature Extraction**
+> 
+1. Feature extraction is the process of transforming raw data into numerical features
+2. Extract features of UAV sound data with [**librosa**](https://github.com/librosa/librosa)
+3. Using MFCC features with 40 shape.
 
-```
+> **Support Vector Machine**
+> 
+1. SVM (Support Vector Machine) is supervised machine learning for classification and regression.
+2. Using SVM algorithm for clssify UAVs.
+3. Train algorithm and pass the model file to application and server.
 
-👨‍👩‍👧‍👦 Collaborator
+</br>   
+   
+# 🖥️Server
+
+
+[Code & Environment link](https://github.com/K-SW-SWATTER/KSW-Purdue/tree/main/Server)
+
+> **The server for comparing the inference time**
+> 
+
+### Linux (CentOS 7)
+
+- C++ 17 (GCC 8)
+- Python 3.9.5
+- TCP Socket Server
+  
+</br>
+
+# Results
+
+<img src = "code/imgs/Untitled.png" width = "30%" height = "20%">  <img src = "code/imgs/Untitled%201.png" width = "30%" height = "20%">  
+
+- Blue means there’s no drone
+- Red means detect drone
+
+</br>   
+   
+# 👨‍👩‍👧‍👦Collaborator
+
 ```
 💂‍♂️ Joonki Rhee
 - Kyonggi University, Suwon, South Korea
@@ -114,4 +151,10 @@ Application
 - Major in Software Engineering
 - 20191580@office.dongseo.ac.kr
 - 👾 github.com/HyeonjongJang
+
+💂‍ Justin Allange
+- Purdue University, West Lafayette, Indiana, USA
+- Major in Computer and Information Technology
+- jallange@purdue.edu
+- 👾 github.com/jallange
 ```
