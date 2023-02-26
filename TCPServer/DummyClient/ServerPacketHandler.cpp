@@ -9,8 +9,8 @@ Tick64_t ServerPacketHandler::_startTime;
 
 struct PKT_S_DETECTION_RESULT
 {
-	uint16 packetSize; // 공용 헤더
-	uint16 packetId; // 공용 헤더
+	uint16 packetSize; // Common header
+	uint16 packetId; // Common header
 	bool result;
 
 	bool Validate()

@@ -12,7 +12,7 @@ MLManager GMLManager;
 struct PKT_C_AUDIO_DATA
 {
 	uint16 packetSize; // Common header, to validate availability packets
-	uint16 packetId; // Common geader, to decide the kind of packets 받은 패킷이 어떤 종류의 패킷인지 구분하기 위한 것
+	uint16 packetId; // Common geader, to decide the kind of packets
 	uint16 featureOffset; // Address of feature data
 	uint16 featureCount = 40;
 

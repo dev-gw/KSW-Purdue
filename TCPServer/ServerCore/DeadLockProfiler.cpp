@@ -10,7 +10,6 @@ void DeadLockProfiler::PushLock(const char* name)
 {
 	LockGuard guard(_lock);
 
-	// 아이디를 찾거나 발급한다.
 	int32 lockId = 0;
 
 	auto findIt = _nameToId.find(name);
@@ -25,10 +24,9 @@ void DeadLockProfiler::PushLock(const char* name)
 		lockId = findIt->second;
 	}
 
-	// 잡고 있는 락이 있었다면
 	if (LLockStack.empty() == false)
 	{
-		// 기존에 발견되지 않은 케이스라면 데드락 여부 다시 확인한다.
+
 		const int32 prevId = LLockStack.top();
 		if (lockId != prevId)
 		{
@@ -93,7 +91,7 @@ void DeadLockProfiler::DFS(int32 here)
 	set<int32>& nextSet = findIt->second;
 	for (int32 there : nextSet)
 	{
-		// 아직 방문한 적이 없다면 방문한다.
+
 		if (_discoveredOrder[there] == -1)
 		{
 			_parent[there] = here;
@@ -101,11 +99,11 @@ void DeadLockProfiler::DFS(int32 here)
 			continue;
 		}
 
-		// here가 there보다 먼저 발견되었다면, there는 here의 후손이다. (순방향 간선)
+
 		if (_discoveredOrder[here] < _discoveredOrder[there])
 			continue;
 
-		// 순방향이 아니고, DFS(there)가 아직 종료하지 않았다면, there는 here의 선조이다. (역방향 간선)
+
 		if (_finished[there] == false)
 		{
 			printf("%s -> %s\n", _idToName[here], _idToName[there]);

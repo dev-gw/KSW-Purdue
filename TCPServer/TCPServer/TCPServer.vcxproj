@@ -106,7 +106,6 @@
     <ClCompile Include="DetectingSessionManager.cpp" />
     <ClCompile Include="MLManager.cpp" />
     <ClCompile Include="TCPServer.cpp" />
-    <ClCompile Include="PacketEnum.cpp" />
     <ClCompile Include="PacketProtocol.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="User.cpp" />
@@ -116,7 +115,6 @@
     <ClInclude Include="DetectingSession.h" />
     <ClInclude Include="DetectingSessionManager.h" />
     <ClInclude Include="MLManager.h" />
-    <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="PacketProtocol.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="User.h" />

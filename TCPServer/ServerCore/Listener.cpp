@@ -95,32 +95,9 @@ void Listener::RegisterAccept(AcceptEvent* acceptEvent)
 		if (epoll_ctl(_service->GetEpollCore()->GetHandle(), EPOLL_CTL_ADD, _socket, acceptEvent->GetEpoll_Event()) < 0)
 		{
 			cout << strerror(errno) << endl;
+			exit(1);
 		}
 	}
-	else
-	{
-		
-		//if (_SocketMap.find(acceptEvent) == _SocketMap.end())
-		//{
-		//	SOCKET newSocket = fcntl(_socket, F_DUPFD); // Duplicate the socket fd
-		//	if (newSocket < 0)
-		//	{
-		//		cout << newSocket << "is less than zero" << endl;
-		//		cout << strerror(errno) << endl;
-		//		return;
-		//	}
-		//	else
-		//	{
-		//		_SocketMap[acceptEvent] = newSocket;
-		//		if (epoll_ctl(_service->GetEpollCore()->GetHandle(), EPOLL_CTL_ADD, newSocket, acceptEvent->GetEpoll_Event()) < 0)
-		//		{
-		//			cout << strerror(errno) << endl;
-		//		}
-		//	}
-		//	
-		//}
-	}
-	
 	
 }
 
@@ -143,18 +120,6 @@ void Listener::ProcessAccept(AcceptEvent* acceptEvent)
 	session->SetNetAddress(NetAddress(inSockAddress));
 	session->ProcessConnect();
 
-
-	// Create new session
-	//SessionRef session = _service->CreateSession();
-	//SessionRef* newSession = &session;
-	//epoll_event* newEvent = new epoll_event();
-
-	//newEvent->events = EPOLLIN | EPOLLET;
-	//newEvent->data.ptr = newSession;
-
-	//ASSERT_CRASH(IS_VALID_SOCKET(epoll_ctl(GET_EPOLL_HANDLE /*epoll_fd*/ , EPOLL_CTL_ADD, acceptSocket, connectEvent)));
-	
-	//SocketUtils::Bind(acceptSocket, inSockAddress);
 
 	
 	RegisterAccept(acceptEvent);
