@@ -38,7 +38,7 @@ When a drone detection application is developed, users can install the applicati
 # 📱Application
 
 
-Code & Environment link
+[Code & Environment link](https://github.com/K-SW-SWATTER/KSW-Purdue/tree/main/Application)
 
 > **Setup**
 > 
@@ -57,9 +57,7 @@ Install .apk file in Android Smartphone (Android 8.1 or later)
    
 # 📘Object_Detection
 
----
-
-Code & Environment link
+[Code & Environment link](https://github.com/K-SW-SWATTER/KSW-Purdue/tree/main/Object_Detection)
 
 > **To run training code**
 > 
@@ -105,7 +103,7 @@ make train
 # 🖥️Server
 
 
-[Code & Environment link](https://github.com/MINJILEE-PURDUE/KSW_2023_Winter_Program/tree/main/SWATTER/code/Server)
+[Code & Environment link](https://github.com/K-SW-SWATTER/KSW-Purdue/tree/main/Server)
 
 > **The server for comparing the inference time**
 > 
