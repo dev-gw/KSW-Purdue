@@ -2,7 +2,14 @@
 
 Deep learning based real time UAV detection using smartphones as Edge Computing device.
 
-- 2023 Winter (Purdue University, West Lafayette, Indiana, USA)  
+- 2023 Winter (Purdue University, West Lafayette, Indiana, USA)     
+
+## My Role
+* Worked for Machine Learning part - Made Objecet_Detection directory.  
+* Conduct feature extraction of sound data.
+* Train machine learning models and find which model is best for detection.
+* Save and converse model file for using application and server.
+
 </br>
 
 # Introduction
