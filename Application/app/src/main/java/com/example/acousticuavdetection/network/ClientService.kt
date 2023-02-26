@@ -76,6 +76,11 @@ class ClientService constructor(private val _type: ServiceType, private val _net
         return session;
     }
 
+    fun GetOwnSession(): Session
+    {
+        return _session;
+    }
+
     fun AddSession(session: Session)
     {
         _sessionCount++;

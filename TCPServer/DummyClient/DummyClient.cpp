@@ -54,7 +54,7 @@ int main()
 	//this_thread::sleep_for(chrono::seconds(1));
 
 	ClientServiceRef service = MakeShared<ClientService>(
-		NetAddress("172.31.56.226", 7367),
+		NetAddress("127.0.0.1", 7367),
 		MakeShared<EpollCore>(),
 		MakeShared<ServerSession>, // TODO : SessionManager µî
 		1);
@@ -78,8 +78,9 @@ int main()
 
 	SendBufferRef sendBuffer = pktWriter.CloseAndReturn();
 
-	while (true)
+	for (int num = 0; num < 10; ++num)
 	{
+		ServerPacketHandler::_startTime = GetTickCount_64();
 		service->Broadcast(sendBuffer);
 		this_thread::sleep_for(chrono::seconds(10));
 	}

@@ -34,6 +34,10 @@ void MLManager::Init()
 
 int8 MLManager::RunModel(const float data[], uint16 featureCount)
 {
+	if (Py_IsInitialized() == false)
+	{
+		Py_Initialize();
+	}
 	WRITE_LOCK;
     PyObject* pArgs, * pValue, * pData, * pModelPath;
 
@@ -43,9 +47,10 @@ int8 MLManager::RunModel(const float data[], uint16 featureCount)
     /* pFunc is a new reference */
 	if (_pFunc && PyCallable_Check(_pFunc)) // python func can be called
 	{
+		pModelPath = PyUnicode_DecodeFSDefault(_modelPath.c_str());
 		pArgs = PyTuple_New(2);
-		//pData = PyTuple_New(dataLen);
 		pData = PyTuple_New(featureCount);
+
 		// Set arguments put to python Func
 		for (int elementNum = 0; elementNum < featureCount; ++elementNum)
 		{

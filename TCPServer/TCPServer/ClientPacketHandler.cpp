@@ -70,7 +70,8 @@ bool ClientPacketHandler::Handle_C_LOGIN(PacketSessionRef& session, BYTE* buffer
 
 bool ClientPacketHandler::Handle_C_AUDIO_DATA(PacketSessionRef & session, BYTE * buffer, int32 len)
 {
-	
+	Tick64_t start, end;
+	double inferenceTime;
 	// TODO
 	BufferReader br(buffer, len);
 
@@ -81,9 +82,13 @@ bool ClientPacketHandler::Handle_C_AUDIO_DATA(PacketSessionRef & session, BYTE *
 
 	float* features = pkt->GetFeatures();
 	
+	start = GetTickCount_64();
 	int8 result = GMLManager.RunModel(features, pkt->featureCount);
+	end = GetTickCount_64();
+	
+	inferenceTime = (double)(end - start);
 
-	cout << "Handle_C_Audio, Result: " << result << endl;
+	cout << "Handle_C_Audio, Result: " << result << ", Inference time: " << inferenceTime << "ms" << endl;
 	return true;
 }
 

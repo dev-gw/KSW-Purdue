@@ -75,20 +75,21 @@ int main()
 
 
 	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress("172.31.56.226", 7367),
+		NetAddress("127.0.0.1", 7367),
 		MakeShared<EpollCore>(),
 		MakeShared<DetectingSession>,
 		10);
 
 	ASSERT_CRASH(service->Start());
 
-	for (int32 i = 0; i < 5; i++)
+	// Can be used when every single thread has their own epoll core
+	/*for (int32 i = 0; i < 5; i++)
 	{
 		GThreadManager->Launch([&service]()
 			{
 				DoWorkerJob(service);
 			});
-	}
+	}*/
 
 	// Main Thread
 	DoWorkerJob(service);
