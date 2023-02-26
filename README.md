@@ -1,21 +1,17 @@
 # SWATTER
 
----
-
 Deep learning based real time UAV detection using smartphones as Edge Computing device.
 
-- 2023 Winter (Purdue University, West Lafayette, Indiana, USA)
+- 2023 Winter (Purdue University, West Lafayette, Indiana, USA)  
+</br>
 
 # Introduction
-
----
-
 UAV technology is currently being used in various fields such as agriculture, communication, logistics, and is expected to be used in more fields in the future.
 Unfortunately, as drone technology advances, incidents of careless misuse, military surveillance, and malicious activity of drones have increased.
 Drone detection is an important issue not only to prevent unfortunate accidents caused by drones, but also to prevent crime by detecting malicious drones. 
 
 > **Novelty**
-> 
+>
 
 ```
 1. Easy to use
@@ -30,17 +26,17 @@ Since most people are using smartphones, this solution is very practical.
 When a drone detection application is developed, users can install the application with just a few touches and check if there is a drone near.
 ```
 
-# System Overview
+</br>  
 
----
+
+# System Overview
 
 ![그림1.png](code/imgs/%25EA%25B7%25B8%25EB%25A6%25BC1.png)
 
-   
+</br>
    
 # 📱Application
 
----
 
 Code & Environment link
 
@@ -57,7 +53,7 @@ Install .apk file in Android Smartphone (Android 8.1 or later)
 2. Mel-frequency cepstral coefficients feature extraction with **[jlibrosa](https://github.com/Subtitle-Synchronizer/jlibrosa)**
 3. Input extracted feature data to Pre-trained model using [**Tensorflow lite Interpreter**](https://github.com/tensorflow/tensorflow)
 
-   
+</br>   
    
 # 📘Object_Detection
 
@@ -104,11 +100,10 @@ make train
 2. Using SVM algorithm for clssify UAVs.
 3. Train algorithm and pass the model file to application and server.
 
-   
+</br>   
    
 # 🖥️Server
 
----
 
 [Code & Environment link](https://github.com/MINJILEE-PURDUE/KSW_2023_Winter_Program/tree/main/SWATTER/code/Server)
 
@@ -120,23 +115,19 @@ make train
 - C++ 17 (GCC 8)
 - Python 3.9.5
 - TCP Socket Server
-   
+  
+</br>
+
 # Results
 
----
-
-![Untitled](code/imgs/Untitled.png)
-
-![Untitled](code/imgs/Untitled%201.png)
+<img src = "code/imgs/Untitled.png" width = "30%" height = "20%">  <img src = "code/imgs/Untitled%201.png" width = "30%" height = "20%">  
 
 - Blue means there’s no drone
 - Red means detect drone
 
-   
+</br>   
    
 # 👨‍👩‍👧‍👦Collaborator
-
----
 
 ```
 💂‍♂️ Joonki Rhee
