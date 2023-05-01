@@ -1,2 +1,3 @@
 *.cpp linguist-vendored
 *.java linguist-vendored
+*.h linguist-vendored
