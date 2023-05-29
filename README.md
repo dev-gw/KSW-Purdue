@@ -3,6 +3,7 @@
 Deep learning based real time UAV detection using smartphones as Edge Computing device.
 
 - 2023 Winter (Purdue University, West Lafayette, Indiana, USA)     
+- [Abstract of Paper](https://drive.google.com/file/d/1Fooi7bgKqxyijHFrqRE4qtMPXeeFv0J6/view?usp=share_link)
 
 ## My Role
 * Worked for Machine Learning part - Made [Objecet_Detection directory](https://github.com/dev-gw/KSW-Purdue/tree/main/Object_Detection).  
